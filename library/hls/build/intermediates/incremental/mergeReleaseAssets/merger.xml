@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="D:\Play Store Projects\Exoplayer2Radio-master\Exoplayer2Radio-master\library\hls\src\main\assets"/><source path="D:\Play Store Projects\Exoplayer2Radio-master\Exoplayer2Radio-master\library\hls\build\generated\assets\shaders\release"/></dataSet><dataSet config="release"><source path="D:\Play Store Projects\Exoplayer2Radio-master\Exoplayer2Radio-master\library\hls\src\release\assets"/></dataSet></merger>

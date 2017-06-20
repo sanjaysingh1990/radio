@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "413712343966",
+    "firebase_url": "https://fmradio-dbc8b.firebaseio.com",
+    "project_id": "fmradio-dbc8b",
+    "storage_bucket": "fmradio-dbc8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413712343966:android:e3e84cb192f92100",
+        "android_client_info": {
+          "package_name": "com.test.sanjay.task"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413712343966-gnj8t4n9i6bghvbmnhietos974sud07b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYp69teCy9gIKaqOfZsLGF1sI6HObuNUc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413712343966:android:1f7452de8bbc7256",
+        "android_client_info": {
+          "package_name": "org.rajmoh.radio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413712343966-gnj8t4n9i6bghvbmnhietos974sud07b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYp69teCy9gIKaqOfZsLGF1sI6HObuNUc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
