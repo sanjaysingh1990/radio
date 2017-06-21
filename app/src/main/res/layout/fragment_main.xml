@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivityFragment"
-    android:background="@drawable/playerbackground"
+    android:background="@color/white"
     >
 
 

@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="org.rajmoh.radio.PlayerActivityFragment">
-
-    <!-- BOTTOM SHEET -->
-    <include layout="@layout/fragment_player_bottomsheet" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transistor_grey_dark"
+        android:background="@drawable/playerbackground"
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -25,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="#ffffff"
+            android:divider="@android:color/holo_red_dark"
             android:dividerPadding="5dp"
             android:orientation="horizontal">
 
@@ -57,6 +53,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/descr_station_name_example"
+                    android:textColor="@color/white"
                     android:textAppearance="@android:style/TextAppearance.Large.Inverse" />
 
                 <TextView
@@ -70,6 +67,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
                     android:text="@string/descr_station_stream_loading"
+                    android:textColor="@color/white"
                     android:textAppearance="@android:style/TextAppearance.Small.Inverse"
                     android:visibility="gone" />
 
@@ -97,25 +95,73 @@
 
         </LinearLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp">
+            android:layout_margin="0dp">
+
+            <org.rajmoh.radio.views.CircularSeekBar
+                android:id="@+id/seekbar_volume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                app:circle_x_radius="120dp"
+                app:circle_y_radius="120dp"
+                app:end_angle="270"
+                app:max="100"
+                app:pointer_alpha_ontouch="100"
+                app:pointer_color="#0174DF"
+                app:pointer_halo_color="#880174DF"
+                app:progress="25"
+                app:start_angle="270"
+                app:use_custom_radii="true" />
 
             <ImageButton
                 android:id="@+id/player_playback_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:adjustViewBounds="true"
-                android:background="@drawable/selector_playback_button"
+                android:src="@drawable/smbl_play"
+                android:background="@drawable/circular_button_gradient"
                 android:contentDescription="@string/descr_playback_button"
                 android:padding="32dp" />
 
-        </RelativeLayout>
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_next_station"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="20dp"
+                />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_skip_previous"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="80dp"
+
+                />
+
+        </FrameLayout>
 
     </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="?attr/actionModeShareDrawable"
+        android:layout_gravity="bottom|left"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="30dp"
+        />
+    <!-- BOTTOM SHEET -->
+    <include layout="@layout/fragment_player_bottomsheet" />
+
+
 
 </android.support.design.widget.CoordinatorLayout>
 

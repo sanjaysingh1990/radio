@@ -24,7 +24,7 @@
             android:id="@+id/recyclerview_leftdrawer"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:background="@color/transistor_red"
+            android:background="@drawable/navigation_background"
             android:paddingTop="30dp"
             />
     </FrameLayout>

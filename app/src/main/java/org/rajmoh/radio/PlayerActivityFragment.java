@@ -26,15 +26,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +48,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,10 +61,13 @@ import org.rajmoh.radio.helpers.NotificationHelper;
 import org.rajmoh.radio.helpers.PermissionHelper;
 import org.rajmoh.radio.helpers.ShortcutHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
+import org.rajmoh.radio.views.CircularSeekBar;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+
 
 
 /**
@@ -88,6 +95,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private ImageButton mStationMenuView;
     private ImageView mPlaybackIndicator;
     private ImageButton mPlaybackButton;
+    private CircularSeekBar mCircularSeekBar;
     private LinearLayout mStationDataSheetNameLayout;
     private LinearLayout mStationDataSheetMetadataLayout;
     private LinearLayout mStationDataSheetStreamUrlLayout;
@@ -95,6 +103,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private LinearLayout mStationDataSheetChannelCountLayout;
     private LinearLayout mStationDataSheetSampleRateLayout;
     private LinearLayout mStationDataSheetBitRateLayout;
+    private FloatingActionButton mFloatingActionButton;
     private View mStationDataSheet;
     private TextView mStationDataSheetMetadata;
     private BottomSheetBehavior mStationDataSheetBehavior;
@@ -111,7 +120,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private boolean mTwoPane;
     private boolean mVisibility;
     private Station mStation;
-
+    private AudioManager audioManager = null;
     /* Constructor (default) */
     public PlayerActivityFragment() {
     }
@@ -188,6 +197,8 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mStationImageView = (ImageView) mRootView.findViewById(R.id.player_imageview_station_icon);
         mPlaybackIndicator = (ImageView) mRootView.findViewById(R.id.player_playback_indicator);
         mStationMenuView = (ImageButton) mRootView.findViewById(R.id.player_item_more_button);
+        mCircularSeekBar= (CircularSeekBar) mRootView.findViewById(R.id.seekbar_volume);
+        mFloatingActionButton= (FloatingActionButton) mRootView.findViewById(R.id.floatingActionButton);
 
         // set station name
         mStationNameView.setText(mStationName);
@@ -302,9 +313,64 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             }
         });
 
+        //share with friends
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT,
+                        getResources().getString(R.string.share_download));
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
+
+        //control device voulume
+
+        initControls();
+
+
         return mRootView;
     }
 
+
+    private void initControls()
+
+    {
+
+        try
+        {
+            audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+            mCircularSeekBar.setMax(audioManager
+                    .getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+            mCircularSeekBar.setProgress(audioManager
+                    .getStreamVolume(AudioManager.STREAM_MUSIC));
+            mCircularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+                            progress, 0);
+                }
+
+                @Override
+                public void onStopTrackingTouch(CircularSeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(CircularSeekBar seekBar) {
+
+                }
+            });
+
+
+        }
+        catch (Exception e)
+        {
+            Log.e("voleror",e.getMessage()+"");
+        }
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
