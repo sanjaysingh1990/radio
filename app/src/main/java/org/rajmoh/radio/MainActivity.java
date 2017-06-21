@@ -295,7 +295,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         loadChannels(cateName);
         binding.drawer.closeDrawer(GravityCompat.START);
         binding.drawer.openDrawer(GravityCompat.END);
-        binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
+        binding.rightDrawerContent .progressbar.setVisibility(View.VISIBLE);
 
     }
 

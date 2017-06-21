@@ -1,6 +1,7 @@
 package org.rajmoh.radio.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +26,11 @@ public class RecyclerChannelsAdapter extends RecyclerView.Adapter<RecyclerChanne
     private ChannelSelectedCallBack channelSelectedCallBack;
     private Colors[] colors;
 
-    public RecyclerChannelsAdapter(Context context, ArrayList<ChannelInfo> mChannelList,ChannelSelectedCallBack channelSelectedCallBack) {
-        this.mChannelList=mChannelList;
+    public RecyclerChannelsAdapter(Context context, ArrayList<ChannelInfo> mChannelList, ChannelSelectedCallBack channelSelectedCallBack) {
+        this.mChannelList = mChannelList;
         this.mContext = context;
-          colors = Colors.values();
-        this.channelSelectedCallBack=channelSelectedCallBack;
+        colors = Colors.values();
+        this.channelSelectedCallBack = channelSelectedCallBack;
 
     }
 
@@ -37,9 +38,9 @@ public class RecyclerChannelsAdapter extends RecyclerView.Adapter<RecyclerChanne
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-                View viewONE = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_channel, parent, false);
-                CustomViewHolder rowONE = new CustomViewHolder(viewONE);
-                return rowONE;
+        View viewONE = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_channel, parent, false);
+        CustomViewHolder rowONE = new CustomViewHolder(viewONE);
+        return rowONE;
 
 
     }
@@ -52,7 +53,8 @@ public class RecyclerChannelsAdapter extends RecyclerView.Adapter<RecyclerChanne
         GradientDrawable gd = (GradientDrawable)holder.mCategory.getBackground().getCurrent();
         gd.setColor(Color.parseColor(colors[position].getColorCode())); //set color*/
         holder.mChannelName.setText(mChannelList.get(position).getChannel_name());
-        setAnimation(holder.container,position);
+
+        setAnimation(holder.container, position);
 
     }
 
@@ -66,23 +68,26 @@ public class RecyclerChannelsAdapter extends RecyclerView.Adapter<RecyclerChanne
         return mChannelList.size();
     }
 
-    class CustomViewHolder extends RecyclerView.ViewHolder{
+    class CustomViewHolder extends RecyclerView.ViewHolder {
         TextView mChannelName;
         LinearLayout container;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
-           mChannelName= (TextView) itemView.findViewById(R.id.text_channel_name);
-           container= (LinearLayout) itemView.findViewById(R.id.container);
-          container.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                  if(channelSelectedCallBack!=null)
-                  {
-                      channelSelectedCallBack.channelSelected(mChannelList.get(getAdapterPosition()).getChannel_name(),mChannelList.get(getAdapterPosition()).getChannel_url());
-                  }
-              }
-          });
+            mChannelName = (TextView) itemView.findViewById(R.id.text_channel_name);
+            container = (LinearLayout) itemView.findViewById(R.id.container);
+            //font 2
+            Typeface tf = Typeface.createFromAsset(mContext.getAssets(), "fonts/roboto_italic.ttf");
+            mChannelName.setTypeface(tf);
+
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (channelSelectedCallBack != null) {
+                        channelSelectedCallBack.channelSelected(mChannelList.get(getAdapterPosition()).getChannel_name(), mChannelList.get(getAdapterPosition()).getChannel_url());
+                    }
+                }
+            });
         }
     }
 }
