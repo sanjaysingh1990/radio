@@ -41,14 +41,14 @@ public class StorageHelper {
 
 
     /* Return a write-able sub-directory from external storage  */
-    public File getCollectionDirectory() {
+    public File  getCollectionDirectory() {
         String subDirectory = "Collection";
         File[] storage = mActivity.getExternalFilesDirs(subDirectory);
         for (File file : storage) {
             if (file != null) {
                 String state = EnvironmentCompat.getStorageState(file);
                 if (Environment.MEDIA_MOUNTED.equals(state)) {
-                    LogHelper.i(LOG_TAG, "External storage: " + file.toString());
+                    LogHelper.e(LOG_TAG, "External storage: " + file.toString());
                     return file;
                 }
             }

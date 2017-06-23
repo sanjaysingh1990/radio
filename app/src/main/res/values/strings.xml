@@ -162,6 +162,8 @@
     <string name="share_download">Hey! I am using this awesome app called &#8217;CRICiT&#8217;. It\’s a must have for cricket lovers who love to go out and play. Try it here:
 https://play.google.com/store/apps/details?id=com.cricit</string>
 
+    <string name="interstitial_full_screen">ca-app-pub-5996879671606073/4285361542</string>
+
     <!--
     +++ IMPORTANT NOTE +++
     The HTML strings previously found here were replaced by multiple non-HTML strings 

@@ -80,6 +80,7 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
     private int mBitrate;
     private Bundle mStationFetchResults;
 
+
     /* Constructor when given file from the Collection folder */
     public Station(File file) {
         // read and parse playlist file
@@ -105,6 +106,7 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
     /* Constructor when given folder and remote location */
     public Station(File folder, URL fileLocation,String stationName) {
         Log.e("channelname",stationName+"");
+        Log.e("foldername",folder.getName()+"");
 
         // create results bundle
         mStationFetchResults = new Bundle();
@@ -278,7 +280,7 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
     /* Downloads remote playlist file */
     private String downloadPlaylistFile(URL fileLocation) {
 
-        LogHelper.v(LOG_TAG, "Downloading... " + fileLocation.toString());
+        LogHelper.e(LOG_TAG, "Downloading... " + fileLocation.toString());
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
                 fileLocation.openStream()))) {
@@ -520,12 +522,12 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
     public void writePlaylistFile(File folder) {
 
         setStationPlaylistFile(folder);
-
+        Log.e("foldersaving",folder.getName());
         if (mStationPlaylistFile.exists()) {
-            LogHelper.w(LOG_TAG, "File exists. Overwriting " + mStationPlaylistFile.getName() + " " + mStationName + " " + mStreamUri);
+            LogHelper.e(LOG_TAG, "File exists. Overwriting " + mStationPlaylistFile.getName() + " " + mStationName + " " + mStreamUri);
         }
 
-        LogHelper.v(LOG_TAG, "Saving... " + mStationPlaylistFile.toString());
+        LogHelper.e(LOG_TAG, "Saving... " + mStationPlaylistFile.toString());
 
         String m3uString = createM3u();
 
@@ -625,6 +627,7 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
             String stationNameCleaned = mStationName.replaceAll("[:/]", "_");
             // construct location of m3u playlist file from station name and folder
             String fileLocation = folder.toString() + "/" + stationNameCleaned + ".m3u";
+            Log.e("filelocation",fileLocation);
             mStationPlaylistFile = new File(fileLocation);
         }
     }

@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.rajmoh.radio.R;
@@ -72,10 +73,13 @@ public final class StationFetcher extends AsyncTask<Void, Void, Station> impleme
 
         if (mFolderExists && mStationUriScheme != null && mStationUriScheme.startsWith("http")  && urlCleanup()) {
             // download and return new station
+
             return new Station(mFolder, mStationURL,mFileName);
 
         } else if (mFolderExists && mStationUriScheme != null && mStationUriScheme.startsWith("file")) {
             // read file and return new station
+
+
             return new Station(mFolder, mStationUri,mFileName);
 
         } else {

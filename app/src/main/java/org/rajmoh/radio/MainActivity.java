@@ -2,10 +2,10 @@
  * MainActivity.java
  * Implements the app's main activity
  * The main activity sets up the main view end inflates a menu bar menu
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -37,10 +37,14 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.rajmoh.radio.adapters.RecyclerCategoryAdapter;
 import org.rajmoh.radio.adapters.RecyclerChannelsAdapter;
 import org.rajmoh.radio.callbacks.CategorySelectedCallback;
@@ -62,25 +66,25 @@ import java.util.ArrayList;
 /**
  * MainActivity class
  */
-public final class MainActivity extends AppCompatActivity implements TransistorKeys, CategorySelectedCallback,ChannelSelectedCallBack {
+public final class MainActivity extends AppCompatActivity implements TransistorKeys, CategorySelectedCallback, ChannelSelectedCallBack {
 
     /* Define log tag */
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
-
+    ActivityMainBinding binding;
     /* Main class variables */
     private boolean mTwoPane;
     private File mCollectionFolder;
     private View mContainer;
     private BroadcastReceiver mCollectionChangedReceiver;
-    ActivityMainBinding binding;
     private LinearLayoutManager mLayoutManager;
     private RecyclerCategoryAdapter mAdapter;
     private ArrayList<CategoryModel> mCategoryList;
     private File mFolder;
+    private File mCategoryFolder;
     private RecyclerChannelsAdapter mChannelsAdapter;
     private ArrayList<ChannelInfo> mChannelList;
-
+    private String mDirectoryName;
+    private AdView adView;
 
 
     @Override
@@ -103,10 +107,16 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         // initialize broadcast receivers
         initializeBroadcastReceivers();
     }
+
     private void init() {
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(this);
         mFolder = storageHelper.getCollectionDirectory();
+
+        //default for hindi
+        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/Hindi");
+        if (!mCategoryFolder.exists())
+            mCategoryFolder.mkdirs();
 
         //disable swipe
         binding.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -150,8 +160,8 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         });
 
 
-        mCategoryList=new ArrayList<>();
-        mChannelList=new ArrayList<>();
+        mCategoryList = new ArrayList<>();
+        mChannelList = new ArrayList<>();
         mLayoutManager = new LinearLayoutManager(this);
         //left side recycler view
         binding.leftDrawerContent.recyclerviewLeftdrawer.setLayoutManager(mLayoutManager);
@@ -159,13 +169,23 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
         binding.rightDrawerContent.recyclerviewRightdrawer.setLayoutManager(new LinearLayoutManager(this));
         //recyclerview adapter
-        mAdapter = new RecyclerCategoryAdapter(this, mCategoryList,this);
-        mChannelsAdapter=new RecyclerChannelsAdapter(this,mChannelList,this);
+        mAdapter = new RecyclerCategoryAdapter(this, mCategoryList, this);
+        mChannelsAdapter = new RecyclerChannelsAdapter(this, mChannelList, this);
         //set adpater for recyclerview
         binding.leftDrawerContent.recyclerviewLeftdrawer.setAdapter(mAdapter);
         binding.rightDrawerContent.recyclerviewRightdrawer.setAdapter(mChannelsAdapter);
-       loadFromServer();
-       loadChannels("hindi");
+        loadFromServer();
+        loadChannels("hindi");
+
+        //load banner ad
+        adView = (AdView)findViewById(R.id.adView);
+//load banner ads
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("abc")
+                .build();
+        adView.loadAd(adRequest);
+
 
     }
 
@@ -226,7 +246,6 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         // make sure that MainActivityFragment's onActivityResult() gets called
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -295,7 +314,15 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         loadChannels(cateName);
         binding.drawer.closeDrawer(GravityCompat.START);
         binding.drawer.openDrawer(GravityCompat.END);
-        binding.rightDrawerContent .progressbar.setVisibility(View.VISIBLE);
+        binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
+        mDirectoryName = cateName;
+        StorageHelper storageHelper = new StorageHelper(this);
+        mFolder = storageHelper.getCollectionDirectory();
+        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + cateName);
+        if (!mCategoryFolder.exists())
+            mCategoryFolder.mkdirs();
+        EventBus.getDefault().post(new String(cateName));// hide search progress if running
+
 
     }
 
@@ -316,7 +343,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         CategoryModel item = noteDataSnapshot.getValue(CategoryModel.class);
-                        Log.e("data",item.getCate_name());
+                        // Log.e("data",item.getCate_name());
                         mCategoryList.add(item);
                         //save to favorite to database
                      /*   Realm myRealm = Util.getInstance().getRelam(FavoriteActivity.this);
@@ -342,7 +369,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     //Log.e("error", databaseError.getMessage());
-                    Util.getInstance().showSnackBar(binding.drawer,databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
+                    Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
                         public void retry() {
                             loadFromServer();
@@ -351,9 +378,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                 }
             });
-        }
-        else
-        {
+        } else {
             Util.getInstance().showSnackBar(binding.drawer, getResources().getString(R.string.no_internet_connecton), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                 @Override
                 public void retry() {
@@ -365,9 +390,10 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     }
 
 
-
     private void loadChannels(String categoryName) {
         if (Util.getInstance().isOnline(this)) {
+            mChannelList.clear();
+            mChannelsAdapter.notifyDataSetChanged();
             //  activityFavoriteBinding.progressbar.setVisibility(View.VISIBLE);
 
             //get device id
@@ -377,15 +403,15 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
             {
                 favoritebranch="UserFavoritesMysetriousWorld";
             }*/
-            Log.e("cn",categoryName);
+            // Log.e("cn",categoryName);
             Util.getInstance().getDatabaseReference().child(categoryName.toLowerCase()).child("channel").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    binding.rightDrawerContent.progressbar.setVisibility(View.GONE);
-                    mChannelList.clear();
+                    hideProgress();
+
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         ChannelInfo item = noteDataSnapshot.getValue(ChannelInfo.class);
-                        Log.e("data",item.getChannel_name());
+                        //  Log.e("data",item.getChannel_name());
                         mChannelList.add(item);
                         //save to favorite to database
                      /*   Realm myRealm = Util.getInstance().getRelam(FavoriteActivity.this);
@@ -411,39 +437,47 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     //Log.e("error", databaseError.getMessage());
-                    Util.getInstance().showSnackBar(binding.drawer,databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
+                    Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
                         public void retry() {
                             loadFromServer();
                         }
                     });
-                    binding.rightDrawerContent.progressbar.setVisibility(View.GONE);
+                    hideProgress();
 
                 }
             });
-        }
-        else
-        {
+        } else {
             Util.getInstance().showSnackBar(binding.drawer, getResources().getString(R.string.no_internet_connecton), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                 @Override
                 public void retry() {
                     loadFromServer();
                 }
             });
-            binding.rightDrawerContent.progressbar.setVisibility(View.GONE);
-
+            hideProgress();
 
         }
     }
 
 
     @Override
-    public void channelSelected(String channelName,String channelUrl) {
-          StationFetcher stationFetcher = new StationFetcher(this, mFolder, Uri.parse(channelUrl),channelName);
+    public void channelSelected(String channelName, String channelUrl) {
+        StationFetcher stationFetcher = new StationFetcher(this, mCategoryFolder, Uri.parse(channelUrl), channelName);
         stationFetcher.execute();
         binding.drawer.closeDrawer(GravityCompat.END);
 
 
+    }
+
+    private void showProgress() {
+        binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
+        binding.rightDrawerContent.textLoading.setVisibility(View.VISIBLE);
+
+    }
+
+    private void hideProgress() {
+        binding.rightDrawerContent.progressbar.setVisibility(View.GONE);
+        binding.rightDrawerContent.textLoading.setVisibility(View.GONE);
 
     }
 }

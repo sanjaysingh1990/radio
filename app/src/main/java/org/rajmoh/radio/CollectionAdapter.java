@@ -30,6 +30,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.util.SortedListAdapterCallback;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -220,7 +221,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Fills sorted list of station */
     private void loadCollection()  {
-
+         Log.e("loadedfolder",mFolder.getName());
         // create folder if necessary
         if (!mFolder.exists()) {
             LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());

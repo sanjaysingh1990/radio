@@ -2,10 +2,10 @@
  * MainActivityFragment.java
  * Implements the main fragment of the main activity
  * This fragment is a list view of radio stations
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -31,7 +31,6 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +42,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.DialogAdd;
 import org.rajmoh.radio.helpers.ImageHelper;
@@ -59,7 +61,6 @@ import org.rajmoh.radio.utils.TimePickerFragment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
@@ -140,14 +141,14 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(mActivity);
-        mFolder = storageHelper.getCollectionDirectory();
+        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/Hindi");
         if (mFolder == null) {
             Toast.makeText(mActivity, mActivity.getString(R.string.toastalert_no_external_storage), Toast.LENGTH_LONG).show();
             mActivity.finish();
         }
-        mFolderSize = mFolder.listFiles().length;
-       Log.e("location",mFolder.getAbsolutePath());
-       Log.e("len",mFolderSize+"");
+        //  mFolderSize = mFolder.listFiles().length;
+        // Log.e("location",mFolder.getAbsolutePath());
+        //Log.e("len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
             mCollectionAdapter = new CollectionAdapter(mActivity, mFolder);
@@ -192,8 +193,6 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
         // attach adapter to list view
         mRecyclerView.setAdapter(mCollectionAdapter);
-
-
 
 
         return mRootView;
@@ -261,7 +260,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                         handleMenuSleepTimerClick(duration);
                     }
                 });
-                newFragment.show(getFragmentManager(),"Time Picker");
+                newFragment.show(getFragmentManager(), "Time Picker");
                 return true;
 
             // CASE ADD
@@ -383,7 +382,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         if (mCollectionAdapter.getItemCount() == 0) {
             mRecyclerView.setVisibility(View.GONE);
         } else {
-             mRecyclerView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -473,12 +472,12 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     /* Handles tap timer icon in actionbar */
     private void handleMenuSleepTimerClick(long duration) {
-        Log.e("duration",duration+"");
+        Log.e("duration", duration + "");
         // load app state
         loadAppState(mActivity);
 
         // set duration
-      //  long duration = 10000; // equals 15 minutes
+        //  long duration = 10000; // equals 15 minutes
 
         // CASE: No station is playing, no timer is running
         if (!mPlayback && !mSleepTimerRunning) {
@@ -582,7 +581,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         mPlayback = settings.getBoolean(PREF_PLAYBACK, false);
         mTwoPane = settings.getBoolean(PREF_TWO_PANE, false);
         mSleepTimerRunning = settings.getBoolean(PREF_TIMER_RUNNING, false);
-        LogHelper.v(LOG_TAG, "Loading state ("+  mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
+        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
     }
 
 
@@ -595,14 +594,14 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         editor.putBoolean(PREF_PLAYBACK, mPlayback);
         editor.putBoolean(PREF_TIMER_RUNNING, mSleepTimerRunning);
         editor.apply();
-        LogHelper.v(LOG_TAG, "Saving state ("+  mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
+        LogHelper.v(LOG_TAG, "Saving state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
     }
 
 
     /* Fetch new station with given Uri */
     private void fetchNewStation(Uri stationUri) {
         // download and add new station
-        StationFetcher stationFetcher = new StationFetcher(mActivity, mFolder, stationUri,"");
+        StationFetcher stationFetcher = new StationFetcher(mActivity, mFolder, stationUri, "");
         stationFetcher.execute();
     }
 
@@ -725,8 +724,8 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                     }
 
                     mLayoutManager.scrollToPosition(newStationPosition);
-                  //  mCollectionAdapter.setStationIDSelected(newStationPosition, mPlayback, false);
-                    mCollectionAdapter.setStationIDSelected(newStationPosition,false, false);
+                    //  mCollectionAdapter.setStationIDSelected(newStationPosition, mPlayback, false);
+                    mCollectionAdapter.setStationIDSelected(newStationPosition, false, false);
 
                     mCollectionAdapter.notifyDataSetChanged(); // TODO Remove?
                 }
@@ -792,4 +791,38 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateList(String folder) {
+
+        Log.e("updated", "yes");
+        // get collection folder
+        StorageHelper storageHelper = new StorageHelper(mActivity);
+        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/" + folder);
+        if (mFolder == null) {
+            Toast.makeText(mActivity, mActivity.getString(R.string.toastalert_no_external_storage), Toast.LENGTH_LONG).show();
+            mActivity.finish();
+        }
+
+
+        mCollectionAdapter = new CollectionAdapter(mActivity, mFolder);
+
+        mRecyclerView.setAdapter(mCollectionAdapter);
+        onResume();
+
+
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 }

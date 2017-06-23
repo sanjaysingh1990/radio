@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -53,8 +54,8 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/descr_station_name_example"
-                    android:textColor="@color/white"
-                    android:textAppearance="@android:style/TextAppearance.Large.Inverse" />
+                    android:textAppearance="@android:style/TextAppearance.Large.Inverse"
+                    android:textColor="@color/white" />
 
                 <TextView
                     android:id="@+id/player_textview_station_metadata"
@@ -67,8 +68,8 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
                     android:text="@string/descr_station_stream_loading"
-                    android:textColor="@color/white"
                     android:textAppearance="@android:style/TextAppearance.Small.Inverse"
+                    android:textColor="@color/white"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -122,45 +123,62 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:adjustViewBounds="true"
-                android:src="@drawable/smbl_play"
                 android:background="@drawable/circular_button_gradient"
                 android:contentDescription="@string/descr_playback_button"
-                android:padding="32dp" />
+                android:padding="32dp"
+                android:src="@drawable/smbl_play" />
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_next_station"
-                android:layout_gravity="bottom|right"
-                android:layout_marginBottom="20dp"
-                />
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_skip_previous"
-                android:layout_gravity="bottom|right"
-                android:layout_marginBottom="80dp"
-
-                />
 
         </FrameLayout>
 
     </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5996879671606073/1331895147"
+
+        />
+
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|left"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/ic_skip_previous"
+
+        />
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_next_station" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="20dp"
         android:clickable="true"
         app:fabSize="mini"
-        app:srcCompat="?attr/actionModeShareDrawable"
-        android:layout_gravity="bottom|left"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="30dp"
-        />
+        app:srcCompat="?attr/actionModeShareDrawable" />
     <!-- BOTTOM SHEET -->
-    <include layout="@layout/fragment_player_bottomsheet" />
+    <include
 
+        layout="@layout/fragment_player_bottomsheet"
+
+        />
 
 
 </android.support.design.widget.CoordinatorLayout>

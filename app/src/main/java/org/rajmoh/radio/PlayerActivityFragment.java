@@ -2,10 +2,10 @@
  * PlayerActivityFragment.java
  * Implements the main fragment of the player activity
  * This fragment is a detail view with the ability to start and stop playback
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -48,9 +48,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.DialogDelete;
@@ -66,8 +70,6 @@ import org.rajmoh.radio.views.CircularSeekBar;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-
 
 
 /**
@@ -119,8 +121,10 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private boolean mStationLoading = true;
     private boolean mTwoPane;
     private boolean mVisibility;
+    private AdView adView;
     private Station mStation;
     private AudioManager audioManager = null;
+
     /* Constructor (default) */
     public PlayerActivityFragment() {
     }
@@ -197,8 +201,9 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mStationImageView = (ImageView) mRootView.findViewById(R.id.player_imageview_station_icon);
         mPlaybackIndicator = (ImageView) mRootView.findViewById(R.id.player_playback_indicator);
         mStationMenuView = (ImageButton) mRootView.findViewById(R.id.player_item_more_button);
-        mCircularSeekBar= (CircularSeekBar) mRootView.findViewById(R.id.seekbar_volume);
-        mFloatingActionButton= (FloatingActionButton) mRootView.findViewById(R.id.floatingActionButton);
+        mCircularSeekBar = (CircularSeekBar) mRootView.findViewById(R.id.seekbar_volume);
+        mFloatingActionButton = (FloatingActionButton) mRootView.findViewById(R.id.floatingActionButton);
+        adView = (AdView) mRootView.findViewById(R.id.adView);
 
         // set station name
         mStationNameView.setText(mStationName);
@@ -330,6 +335,24 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         initControls();
 
+        //load banner ads
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("abc")
+                .build();
+        adView.loadAd(adRequest);
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int i) {
+                Log.e("error", i + "");
+            }
+
+            @Override
+            public void onAdLoaded() {
+                Log.e("error", "loaded");
+            }
+        });
+
 
         return mRootView;
     }
@@ -339,8 +362,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
     {
 
-        try
-        {
+        try {
             audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
             mCircularSeekBar.setMax(audioManager
                     .getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -365,10 +387,8 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             });
 
 
-        }
-        catch (Exception e)
-        {
-            Log.e("voleror",e.getMessage()+"");
+        } catch (Exception e) {
+            Log.e("voleror", e.getMessage() + "");
         }
     }
 
@@ -377,6 +397,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         super.onViewCreated(view, savedInstanceState);
         // initialize broadcast receivers
         initializeBroadcastReceivers();
+        initializeAdd();
     }
 
 
@@ -618,10 +639,10 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
 
     /* Create Bitmap image for station */
-    private Bitmap createStationImage () {
+    private Bitmap createStationImage() {
         Bitmap stationImageSmall;
         ImageHelper imageHelper;
-        if (mStation != null &&  mStation.getStationImageFile().exists()) {
+        if (mStation != null && mStation.getStationImageFile().exists()) {
             // get image from collection
             stationImageSmall = BitmapFactory.decodeFile(mStation.getStationImageFile().toString());
         } else {
@@ -645,7 +666,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 if (mStreamUri != null && mStationName != null) {
                     // set clip text
                     if (mStationMetadata != null) {
-                        clipboardText = mStationName +  " - " + mStationMetadata + " (" + mStreamUri + ")";
+                        clipboardText = mStationName + " - " + mStationMetadata + " (" + mStreamUri + ")";
                     } else {
                         clipboardText = mStationName + " (" + mStreamUri + ")";
                     }
@@ -776,7 +797,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mStationBitRate = settings.getInt(PREF_STATION_BIT_RATE, -1);
         mPlayback = settings.getBoolean(PREF_PLAYBACK, false);
         mStationLoading = settings.getBoolean(PREF_STATION_LOADING, false);
-        LogHelper.v(LOG_TAG, "Loading state ("+  mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationMetadata + ")");
+        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationMetadata + ")");
     }
 
 
@@ -816,6 +837,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                         break;
                 }
             }
+
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 // react to dragging events
@@ -979,7 +1001,6 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     }
 
 
-
     /* Handles adding, deleting and renaming of station */
     private void handleCollectionChanges(Intent intent) {
         switch (intent.getIntExtra(EXTRA_COLLECTION_CHANGE, 1)) {
@@ -1017,4 +1038,45 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         }
     }
 
+    private void initializeAdd() {
+
+
+        final  InterstitialAd mInterstitialAd = new InterstitialAd(getActivity());
+        // set the ad unit ID
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+
+                // Check the LogCat to get your test device ID
+                .addTestDevice("E5675C829ED064BFA2ACF17C9F2B9400")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+                mInterstitialAd.show();
+            }
+
+            @Override
+            public void onAdClosed() {
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.e("adderror", errorCode + "");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+            }
+
+            @Override
+            public void onAdOpened() {
+                Log.e("addopened", "opened");
+            }
+        });
+    }
 }
