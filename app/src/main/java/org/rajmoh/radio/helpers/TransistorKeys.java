@@ -104,4 +104,7 @@ public interface TransistorKeys {
     int COPY_STATION_METADATA = 2;
     int COPY_STREAM_URL = 3;
 
+
+    String CATEGORY_NAME="category_name";
+
 }

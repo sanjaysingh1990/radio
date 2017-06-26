@@ -146,6 +146,7 @@
 
 
     <ImageView
+        android:id="@+id/image_previouschannel"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="top|left"
@@ -156,6 +157,7 @@
         />
 
     <ImageView
+        android:id="@+id/image_nextchannel"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="top|right"

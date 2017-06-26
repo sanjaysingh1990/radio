@@ -322,6 +322,9 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         if (!mCategoryFolder.exists())
             mCategoryFolder.mkdirs();
         EventBus.getDefault().post(new String(cateName));// hide search progress if running
+        Intent intent = new Intent(this, PlayerService.class);
+        intent.setAction(ACTION_STOP);
+        startService(intent);
 
 
     }

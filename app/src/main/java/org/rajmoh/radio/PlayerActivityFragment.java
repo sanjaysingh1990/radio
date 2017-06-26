@@ -64,12 +64,17 @@ import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.NotificationHelper;
 import org.rajmoh.radio.helpers.PermissionHelper;
 import org.rajmoh.radio.helpers.ShortcutHelper;
+import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
 import org.rajmoh.radio.views.CircularSeekBar;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -124,6 +129,11 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private AdView adView;
     private Station mStation;
     private AudioManager audioManager = null;
+    private List<Station> mStationList;
+    private String mCategoryName;
+    private ImageView mImgPreviousChannel;
+    private ImageView mImgNextChannel;
+    private int mPosition = 0;
 
     /* Constructor (default) */
     public PlayerActivityFragment() {
@@ -162,6 +172,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 arguments.remove(ARG_STATION_ID);
             } else {
                 mStationID = 0;
+                mPosition = mStationID;
                 LogHelper.e(LOG_TAG, "Error: did not receive id of station. Choosing default ID for station");
             }
 
@@ -179,6 +190,11 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 mTwoPane = arguments.getBoolean(ARG_TWO_PANE, false);
             } else {
                 mTwoPane = false;
+            }
+            if (arguments.containsKey(CATEGORY_NAME)) {
+                mCategoryName = arguments.getString(CATEGORY_NAME);
+            } else {
+                mCategoryName = "";
             }
 
         }
@@ -203,6 +219,8 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mStationMenuView = (ImageButton) mRootView.findViewById(R.id.player_item_more_button);
         mCircularSeekBar = (CircularSeekBar) mRootView.findViewById(R.id.seekbar_volume);
         mFloatingActionButton = (FloatingActionButton) mRootView.findViewById(R.id.floatingActionButton);
+        mImgNextChannel = (ImageView) mRootView.findViewById(R.id.image_nextchannel);
+        mImgPreviousChannel = (ImageView) mRootView.findViewById(R.id.image_previouschannel);
         adView = (AdView) mRootView.findViewById(R.id.adView);
 
         // set station name
@@ -353,10 +371,55 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             }
         });
 
+        //next button listener
+        mImgNextChannel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mStationList.size() > 1 && mPosition < mStationList.size()-1) {
+                    mPosition++;
+                    Log.e("listsize", mStationList.size() + "'");
+                    Log.e("cpos+", mPosition + "");
+
+                    setupNextChannel();
+                }
+            }
+        });
+
+        //previous button listener
+
+        mImgPreviousChannel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mStationList.size() > 0 && mPosition > 0) {
+                    mPosition--;
+                    Log.e("listsize", mStationList.size() + "'");
+                    Log.e("cpos+", mPosition + "");
+
+                    setupNextChannel();
+                }
+            }
+        });
+        //setup sorted list
+
+        mStationList = new ArrayList<>();
+
+        loadCollection(mCategoryName);
 
         return mRootView;
     }
 
+    private void setupNextChannel() {
+        // get station from arguments
+        Station station = mStationList.get(mPosition);
+        mStation = station;
+        // get station ID from arguments
+        mStationID = mPosition;
+        // get station name and Uri
+        mStationName = station.getStationName();
+        mStreamUri = station.getStreamUri().toString();
+        mStationNameView.setText(mStationName);
+        mPlaybackButton.performClick();
+    }
 
     private void initControls()
 
@@ -549,6 +612,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         intent.setAction(ACTION_PLAY);
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);
+        intent.putExtra(CATEGORY_NAME,mCategoryName);
         mActivity.startService(intent);
         LogHelper.v(LOG_TAG, "Starting player service.");
 
@@ -1041,7 +1105,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private void initializeAdd() {
 
 
-        final  InterstitialAd mInterstitialAd = new InterstitialAd(getActivity());
+        final InterstitialAd mInterstitialAd = new InterstitialAd(getActivity());
         // set the ad unit ID
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
@@ -1056,7 +1120,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         mInterstitialAd.setAdListener(new AdListener() {
             public void onAdLoaded() {
-                mInterstitialAd.show();
+                //mInterstitialAd.show();
             }
 
             @Override
@@ -1079,4 +1143,66 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             }
         });
     }
+
+    /* Fills sorted list of station */
+    private void loadCollection(String categoryName) {
+        // get collection folder
+        StorageHelper storageHelper = new StorageHelper(getActivity());
+        File mFolder = storageHelper.getCollectionDirectory();
+        //  Log.e("playerfolder", categoryName);
+        File mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + categoryName);
+        //Log.e("playerfolder2", mCategoryFolder.getName());
+        // create folder if necessary
+        if (!mCategoryFolder.exists()) {
+           // LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
+            mCategoryFolder.mkdir();
+        }
+
+        // create nomedia file to prevent media scanning
+        File nomedia = new File(mCategoryFolder, ".nomedia");
+        if (!nomedia.exists()) {
+           // LogHelper.v(LOG_TAG, "Creating .nomedia file in folder: " + mCategoryFolder.toString());
+
+            try (FileOutputStream noMediaOutStream = new FileOutputStream(nomedia)) {
+                noMediaOutStream.write(0);
+            } catch (IOException e) {
+                //LogHelper.e(LOG_TAG, "Unable to write .nomedia file in folder: " + mFolder.toString());
+            }
+        }
+
+        // create array of Files from folder
+        File[] listOfFiles = mCategoryFolder.listFiles();
+
+        if (listOfFiles != null) {
+            // fill array list of mStations
+            for (File file : listOfFiles) {
+                if (file.isFile() && file.toString().endsWith(".m3u")) {
+                    // create new station from file
+                    Station newStation = new Station(file);
+                    if (newStation.getStreamUri() != null) {
+                        mStationList.add(newStation);
+
+                    }
+                }
+            }
+
+            Collections.sort(mStationList, new Comparator<Station>() {
+                public int compare(Station s1, Station s2) {
+                    return s1.getStationName().compareToIgnoreCase(s2.getStationName());
+                }
+            });
+
+
+            if (mStationList.size() == 1) {
+                mImgNextChannel.setVisibility(View.GONE);
+                mImgPreviousChannel.setVisibility(View.GONE);
+            } else if (mStationList.size() == 2) {
+                mImgPreviousChannel.setVisibility(View.GONE);
+            }
+
+
+        }
+
+    }
+
 }

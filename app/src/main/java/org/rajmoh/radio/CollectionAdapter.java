@@ -2,10 +2,10 @@
  * CollectionAdapter.java
  * Implements the CollectionAdapter class
  * A CollectionAdapter is a custom adapter for a RecyclerView
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -61,6 +61,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     /* Main class variables */
     private final Activity mActivity;
     private final File mFolder;
+    private final SortedList<Station> mStationList;
     private BroadcastReceiver mPlaybackStateChangedReceiver;
     private boolean mPlayback;
     private boolean mStationLoading;
@@ -68,11 +69,10 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     private int mStationIDLast;
     private int mStationIDSelected;
     private boolean mTwoPane;
-    private final SortedList<Station> mStationList;
 
 
     /* Constructor */
-    public CollectionAdapter (Activity activity, File folder) {
+    public CollectionAdapter(Activity activity, File folder) {
         // set main variables
         mActivity = activity;
         mFolder = folder;
@@ -220,8 +220,8 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
 
     /* Fills sorted list of station */
-    private void loadCollection()  {
-         Log.e("loadedfolder",mFolder.getName());
+    private void loadCollection() {
+        Log.e("loadedfolder", mFolder.getName());
         // create folder if necessary
         if (!mFolder.exists()) {
             LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
@@ -269,6 +269,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             args.putParcelable(ARG_STATION, station);
             args.putInt(ARG_STATION_ID, position);
             args.putBoolean(ARG_TWO_PANE, mTwoPane);
+            args.putString(CATEGORY_NAME, mFolder.getName());
 
             PlayerActivityFragment playerActivityFragment = new PlayerActivityFragment();
             playerActivityFragment.setArguments(args);
@@ -281,6 +282,8 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             intent.setAction(ACTION_SHOW_PLAYER);
             intent.putExtra(EXTRA_STATION, station);
             intent.putExtra(EXTRA_STATION_ID, position);
+            intent.putExtra(CATEGORY_NAME, mFolder.getName());
+
             mActivity.startActivity(intent);
         }
     }
@@ -353,7 +356,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         mStationIDSelected = settings.getInt(PREF_STATION_ID_SELECTED, 0);
         mPlayback = settings.getBoolean(PREF_PLAYBACK, false);
         mStationLoading = settings.getBoolean(PREF_STATION_LOADING, false);
-        LogHelper.v(LOG_TAG, "Loading state ("+  mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback  + " / " + mStationLoading + ")");
+        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + ")");
     }
 
 
@@ -363,7 +366,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(PREF_STATION_ID_SELECTED, mStationIDSelected);
         editor.apply();
-        LogHelper.v(LOG_TAG, "Saving state ("+  mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback  + " / " + mStationLoading + " / " + mStationIDSelected +")");
+        LogHelper.v(LOG_TAG, "Saving state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationIDSelected + ")");
     }
 
 
@@ -426,13 +429,13 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
 
     /* Getter for ID of given station */
-    public int getStationID (Station station) {
+    public int getStationID(Station station) {
         return mStationList.indexOf(station);
     }
 
 
     /* Getter for station of given ID */
-    public Station getStation (int stationID) {
+    public Station getStation(int stationID) {
         return mStationList.get(stationID);
     }
 
@@ -564,7 +567,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         // load app state
         loadAppState(mActivity);
 
-        if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE) && intent.hasExtra(EXTRA_STATION_ID)){
+        if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE) && intent.hasExtra(EXTRA_STATION_ID)) {
 
             notifyDataSetChanged();
 

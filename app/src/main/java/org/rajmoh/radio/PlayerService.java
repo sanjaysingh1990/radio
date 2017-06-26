@@ -2,10 +2,10 @@
  * PlayerService.java
  * Implements the app's playback background service
  * The service plays streaming audio and handles playback controls
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -41,6 +41,7 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.C;
@@ -75,11 +76,17 @@ import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.CustomDefaultHttpDataSourceFactory;
 import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.NotificationHelper;
+import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.google.android.exoplayer2.ExoPlaybackException.TYPE_RENDERER;
@@ -102,9 +109,9 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     /* Main class variables */
     private static Station mStation;
-    private AudioManager mAudioManager;
     private static MediaSessionCompat mSession;
     private static MediaControllerCompat mController;
+    private AudioManager mAudioManager;
     private int mStationID;
     private int mStationIDCurrent;
     private int mStationIDLast;
@@ -113,15 +120,88 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
     private boolean mPlayback;
     private boolean mStationLoading;
     private boolean mStationMetadataReceived;
+    /**
+     * Callback: Callback from IcyInputStream reacting to new metadata
+     */
+    PlayerCallback playerCallback = new PlayerCallback() {
+
+        @Override
+        public void playerStarted() {
+            LogHelper.v(LOG_TAG, "PlayerCallback: playerStarted");
+        }
+
+        @Override
+        public void playerPCMFeedBuffer(boolean isPlaying, int audioBufferSizeMs, int audioBufferCapacityMs) {
+            LogHelper.v(LOG_TAG, "PlayerCallback: playerPCMFeedBuffer");
+        }
+
+        @Override
+        public void playerStopped(int perf) {
+            LogHelper.v(LOG_TAG, "PlayerCallback: playerStopped");
+        }
+
+        @Override
+        public void playerException(Throwable t) {
+            LogHelper.v(LOG_TAG, "PlayerCallback: playerException");
+        }
+
+        @Override
+        public void playerMetadata(String key, String value) {
+            if (key.equals(SHOUTCAST_STREAM_TITLE_HEADER)) {
+                LogHelper.v(LOG_TAG, "PlayerCallback: playerMetadata " + key + " : " + value);
+
+                if (value.length() > 0) {
+                    mStationMetadata = value;
+                } else {
+                    mStationMetadata = mStation.getStationName();
+                }
+                mStationMetadataReceived = true;
+                saveAppState();
+
+                // send local broadcast
+                Intent i = new Intent();
+                i.setAction(ACTION_METADATA_CHANGED);
+                i.putExtra(EXTRA_METADATA, mStationMetadata);
+                i.putExtra(EXTRA_STATION, mStation);
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+
+//            // save metadata to shared preferences
+//            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//            SharedPreferences.Editor editor = settings.edit();
+//            editor.putBoolean()
+//            editor.putString(PREF_STATION_METADATA,  mStationMetadata);
+//            editor.apply();
+
+                // update media session metadata
+                mSession.setMetadata(getMetadata(getApplicationContext(), mStation, mStationMetadata));
+
+                // update notification
+                NotificationHelper.update(mStation, mStationID, mStationMetadata, mSession);
+
+            }
+        }
+
+        @Override
+        public void playerAudioTrackCreated(AudioTrack audioTrack) {
+            LogHelper.v(LOG_TAG, "PlayerCallback: playerMetadata");
+        }
+    };
     private HeadphoneUnplugReceiver mHeadphoneUnplugReceiver;
     private WifiManager.WifiLock mWifiLock;
     private PowerManager.WakeLock mWakeLock;
     private SimpleExoPlayer mExoPlayer;
     private String mUserAgent;
-
+    private int mCurrentPosition = 0;
+    private String mCategoryName;
+    private List<Station> mStationList;
 
     /* Constructor (default) */
     public PlayerService() {
+    }
+
+    /* Getter for current station */
+    public static Station getStation() {
+        return mStation;
     }
 
     @Override
@@ -156,9 +236,16 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         createExoPlayer();
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getExtras() != null && intent.hasExtra(EXTRA_STATION_ID)) {
+            mCurrentPosition = intent.getExtras().getInt(EXTRA_STATION_ID);
+        }
+
+        if (intent.getExtras() != null && intent.hasExtra(CATEGORY_NAME)) {
+            mCategoryName = intent.getExtras().getString(CATEGORY_NAME);
+            loadCollection(mCategoryName);
+        }
 
         // checking for empty intent
         if (intent == null) {
@@ -208,17 +295,28 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // ACTION NEXT
         else if (intent.getAction().equals(ACTION_NEXT)) {
             LogHelper.e(LOG_TAG, "Service received command:NEXT");
+            Log.e("pos", mCurrentPosition + "");
+            Log.e("category,", mCategoryName);
+            if (mStationList.size() > 1 && mCurrentPosition < mStationList.size()-1) {
+                mCurrentPosition++;
 
+                playNextChannel(mStationList.get(mCurrentPosition),mCurrentPosition,mStationList.get(mCurrentPosition).getStreamUri().toString());
             }
+
+        }
 
 
         // ACTION PREVIOUS
         else if (intent.getAction().equals(ACTION_PREVIOUS)) {
             LogHelper.e(LOG_TAG, "Service received command: PREVIOUS");
+            if (mStationList.size() > 0 && mCurrentPosition > 0) {
+                mCurrentPosition--;
 
+                playNextChannel(mStationList.get(mCurrentPosition),mCurrentPosition,mStationList.get(mCurrentPosition).getStreamUri().toString());
 
             }
 
+        }
 
 
         // listen for media button
@@ -228,13 +326,21 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         return START_STICKY;
     }
 
+    private void playNextChannel(Station station,int stationid,String uri)
+    {
+        // get URL of station from intent
+            mStation = station;
+            mStationID = stationid;
+            mStreamUri = uri;
 
 
+        // update controller - start playback
+        mController.getTransportControls().play();
+    }
     @Override
     public void onMetadata(Metadata metadata) {
         LogHelper.v(LOG_TAG, "Got new metadata: " + metadata.toString());
     }
-
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -304,7 +410,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     }
 
-
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         switch (error.type) {
@@ -330,7 +435,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     }
 
-
     @Override
     public void onLoadingChanged(boolean isLoading) {
         String state;
@@ -342,12 +446,10 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         LogHelper.v(LOG_TAG, "State of loading has changed: " + state);
     }
 
-
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
 
     }
-
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
@@ -362,18 +464,15 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         }
     }
 
-
     @Override
     public void onPositionDiscontinuity() {
 
     }
 
-
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
 
     }
-
 
     @Nullable
     @Override
@@ -391,7 +490,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
     public void onLoadChildren(@NonNull String rootId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
         result.sendResult(null);
     }
-
 
     @Override
     public void onAudioFocusChange(int focusChange) {
@@ -418,20 +516,18 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                 if (!mPlayback && mExoPlayer != null && mExoPlayer.getPlayWhenReady()) {
                     mController.getTransportControls().stop();
-                }
-                else if (mPlayback && mExoPlayer != null && mExoPlayer.getPlayWhenReady()) {
+                } else if (mPlayback && mExoPlayer != null && mExoPlayer.getPlayWhenReady()) {
                     mExoPlayer.setPlayWhenReady(false);
                 }
                 break;
             // temporary external request of audio focus
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                if (mExoPlayer != null && mExoPlayer.getPlayWhenReady()){
+                if (mExoPlayer != null && mExoPlayer.getPlayWhenReady()) {
                     mExoPlayer.setVolume(0.1f);
                 }
                 break;
         }
     }
-
 
     @Override
     public void onDestroy() {
@@ -462,13 +558,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // cancel notification
         stopForeground(true);
     }
-
-
-    /* Getter for current station */
-    public static Station getStation() {
-        return mStation;
-    }
-
 
     /* Starts playback */
     private void startPlayback() {
@@ -526,7 +615,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         mHeadphoneUnplugReceiver = new HeadphoneUnplugReceiver();
         registerReceiver(mHeadphoneUnplugReceiver, headphoneUnplugIntentFilter);
     }
-
 
     /* Stops playback */
     private void stopPlayback() {
@@ -587,7 +675,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         }
     }
 
-
     /* Creates an instance of SimpleExoPlayer */
     private void createExoPlayer() {
 
@@ -604,7 +691,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // create the player
         mExoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getApplicationContext()), trackSelector, loadControl);
     }
-
 
     /* Add a media source to the ExoPlayer */
     private void prepareExoPLayer(boolean sourceIsHLS) {
@@ -626,20 +712,17 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         mExoPlayer.prepare(mediaSource);
     }
 
-
     /* Releases the ExoPlayer */
     private void releaseExoPlayer() {
         mExoPlayer.release();
         mExoPlayer = null;
     }
 
-
     /* Set up the media mExoPlayer */
     private void initializeExoPlayer() {
         InitializeExoPlayerHelper initializeExoPlayerHelper = new InitializeExoPlayerHelper();
         initializeExoPlayerHelper.execute();
     }
-
 
     /* Request audio manager focus */
     private boolean requestFocus() {
@@ -649,13 +732,11 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
-
     /* Give up audio focus */
     private boolean giveUpAudioFocus() {
         int result = mAudioManager.abandonAudioFocus(this);
         return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
-
 
     /* Creates media session */
     private MediaSessionCompat createMediaSession(Context context) {
@@ -671,7 +752,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
         return session;
     }
-
 
     /* Creates playback state depending on mPlayback */
     private PlaybackStateCompat getPlaybackState() {
@@ -690,7 +770,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     .build();
         }
     }
-
 
     /* Creates the metadata needed for MediaSession */
     private MediaMetadataCompat getMetadata(Context context, Station station, String metaData) {
@@ -717,7 +796,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         }
     }
 
-
     /* Saves state of playback */
     private void saveAppState() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplication());
@@ -734,18 +812,89 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             editor.putInt(PREF_STATION_BIT_RATE, mStation.getBitrate());
         }
         editor.apply();
-        LogHelper.v(LOG_TAG, "Saving state ("+  mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + ")");
+        LogHelper.v(LOG_TAG, "Saving state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + ")");
     }
-
 
     /* Loads app state from preferences */
     private void loadAppState(Context context) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         mStationIDCurrent = settings.getInt(PREF_STATION_ID_CURRENTLY_PLAYING, -1);
         mStationIDLast = settings.getInt(PREF_STATION_ID_LAST, -1);
-        LogHelper.v(LOG_TAG, "Loading state ("+  mStationIDCurrent + " / " + mStationIDLast + ")");
+        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + ")");
     }
+    /**
+     * End of inner class
+     */
 
+    /**
+     * End of inner callback
+     */
+
+ /* Fills sorted list of station */
+    private void loadCollection(String categoryName) {
+        mStationList = new ArrayList<>();
+        // get collection folder
+        StorageHelper storageHelper = new StorageHelper(PlayerService.this);
+        File mFolder = storageHelper.getCollectionDirectory();
+        //  Log.e("playerfolder", categoryName);
+        File mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + categoryName);
+        //Log.e("playerfolder2", mCategoryFolder.getName());
+        // create folder if necessary
+        if (!mCategoryFolder.exists()) {
+            LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
+            mCategoryFolder.mkdir();
+        }
+
+        // create nomedia file to prevent media scanning
+        File nomedia = new File(mCategoryFolder, ".nomedia");
+        if (!nomedia.exists()) {
+            LogHelper.v(LOG_TAG, "Creating .nomedia file in folder: " + mCategoryFolder.toString());
+
+            try (FileOutputStream noMediaOutStream = new FileOutputStream(nomedia)) {
+                noMediaOutStream.write(0);
+            } catch (IOException e) {
+                LogHelper.e(LOG_TAG, "Unable to write .nomedia file in folder: " + mFolder.toString());
+            }
+        }
+
+        // create array of Files from folder
+        File[] listOfFiles = mCategoryFolder.listFiles();
+
+        if (listOfFiles != null) {
+            // fill array list of mStations
+            for (File file : listOfFiles) {
+                if (file.isFile() && file.toString().endsWith(".m3u")) {
+                    // create new station from file
+                    Station newStation = new Station(file);
+                    if (newStation.getStreamUri() != null) {
+                        mStationList.add(newStation);
+                        Log.e("playerlength", mStationList.size() + "");
+
+                    }
+                }
+            }
+
+            Collections.sort(mStationList, new Comparator<Station>() {
+                public int compare(Station s1, Station s2) {
+                    return s1.getStationName().compareToIgnoreCase(s2.getStationName());
+                }
+            });
+
+
+            /*if (mStationList.size() == 1) {
+                mImgNextChannel.setVisibility(View.GONE);
+                mImgPreviousChannel.setVisibility(View.GONE);
+            } else if (mStationList.size() == 2) {
+                mImgPreviousChannel.setVisibility(View.GONE);
+            }*/
+
+
+        }
+
+    }
+    /**
+     * End of inner class
+     */
 
     /**
      * Inner class: Receiver for headphone unplug-signal
@@ -767,11 +916,10 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
      * End of inner class
      */
 
-
     /**
      * Inner class: Handles callback from active media session ***
      */
-    private final class MediaSessionCallback extends MediaSessionCompat.Callback  {
+    private final class MediaSessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
             // start playback
@@ -793,10 +941,6 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         }
 
     }
-    /**
-     * End of inner class
-     */
-
 
     /**
      * Inner class: Checks for HTTP Live Streaming (HLS) before playing
@@ -834,79 +978,5 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         }
 
     }
-    /**
-     * End of inner class
-     */
-
-
-    /**
-     * Callback: Callback from IcyInputStream reacting to new metadata
-     */
-    PlayerCallback playerCallback = new PlayerCallback() {
-
-        @Override
-        public void playerStarted() {
-            LogHelper.v(LOG_TAG, "PlayerCallback: playerStarted" );
-        }
-
-        @Override
-        public void playerPCMFeedBuffer(boolean isPlaying, int audioBufferSizeMs, int audioBufferCapacityMs) {
-            LogHelper.v(LOG_TAG, "PlayerCallback: playerPCMFeedBuffer" );
-        }
-
-        @Override
-        public void playerStopped(int perf) {
-            LogHelper.v(LOG_TAG, "PlayerCallback: playerStopped" );
-        }
-
-        @Override
-        public void playerException(Throwable t) {
-            LogHelper.v(LOG_TAG, "PlayerCallback: playerException" );
-        }
-
-        @Override
-        public void playerMetadata(String key, String value) {
-            if (key.equals(SHOUTCAST_STREAM_TITLE_HEADER)) {
-                LogHelper.v(LOG_TAG, "PlayerCallback: playerMetadata " + key + " : " + value);
-
-                if (value.length() > 0) {
-                    mStationMetadata = value;
-                } else {
-                    mStationMetadata = mStation.getStationName();
-                }
-                mStationMetadataReceived = true;
-                saveAppState();
-
-                // send local broadcast
-                Intent i = new Intent();
-                i.setAction(ACTION_METADATA_CHANGED);
-                i.putExtra(EXTRA_METADATA, mStationMetadata);
-                i.putExtra(EXTRA_STATION, mStation);
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
-
-//            // save metadata to shared preferences
-//            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//            SharedPreferences.Editor editor = settings.edit();
-//            editor.putBoolean()
-//            editor.putString(PREF_STATION_METADATA,  mStationMetadata);
-//            editor.apply();
-
-                // update media session metadata
-                mSession.setMetadata(getMetadata(getApplicationContext(), mStation, mStationMetadata));
-
-                // update notification
-                NotificationHelper.update(mStation, mStationID, mStationMetadata, mSession);
-
-            }
-        }
-
-        @Override
-        public void playerAudioTrackCreated(AudioTrack audioTrack) {
-            LogHelper.v(LOG_TAG, "PlayerCallback: playerMetadata" );
-        }
-    };
-    /**
-     * End of inner callback
-     */
 
 }

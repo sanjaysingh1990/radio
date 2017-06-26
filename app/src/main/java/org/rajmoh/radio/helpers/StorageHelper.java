@@ -2,10 +2,10 @@
  * StorageHelper.java
  * Implements the StorageHelper class
  * A StorageHelper provides reliable access to Androids external storage
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -15,6 +15,7 @@
 package org.rajmoh.radio.helpers;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Environment;
 import android.support.v4.os.EnvironmentCompat;
 
@@ -31,7 +32,9 @@ public class StorageHelper {
 
 
     /* Main class variables */
-    private final Activity mActivity;
+    private Activity mActivity;
+
+    private Context mContext;
 
 
     /* Constructor */
@@ -39,11 +42,19 @@ public class StorageHelper {
         mActivity = activity;
     }
 
+    public StorageHelper(Context context) {
+        mContext = context;
+    }
+
 
     /* Return a write-able sub-directory from external storage  */
-    public File  getCollectionDirectory() {
+    public File getCollectionDirectory() {
         String subDirectory = "Collection";
-        File[] storage = mActivity.getExternalFilesDirs(subDirectory);
+        File[] storage;
+        if (mActivity == null)
+            storage = mContext.getExternalFilesDirs(subDirectory);
+        else
+            storage = mActivity.getExternalFilesDirs(subDirectory);
         for (File file : storage) {
             if (file != null) {
                 String state = EnvironmentCompat.getStorageState(file);

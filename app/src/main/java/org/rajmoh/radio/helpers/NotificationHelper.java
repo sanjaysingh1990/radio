@@ -79,7 +79,7 @@ public final class NotificationHelper implements TransistorKeys {
 
         // build notification
         mNotification = getNotificationBuilder(station, stationID, mStationMetadata).build();
-
+        mNotification.priority = Notification.PRIORITY_MAX;
         // display updated notification
         NotificationManager notificationManager = (NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(PLAYER_SERVICE_NOTIFICATION_ID, mNotification);

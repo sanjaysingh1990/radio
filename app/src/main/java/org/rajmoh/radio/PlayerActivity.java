@@ -74,12 +74,19 @@ public final class PlayerActivity extends AppCompatActivity implements Transisto
             } else {
                 startPlayback = false;
             }
+            //get current category name
+            String categoryName="";
+            if(intent.hasExtra(CATEGORY_NAME))
+            {
+                categoryName=intent.getStringExtra(CATEGORY_NAME);
+            }
 
             // create bundle for player activity fragment
             Bundle args = new Bundle();
             args.putParcelable(ARG_STATION, station);
             args.putInt(ARG_STATION_ID, stationID);
             args.putBoolean(ARG_PLAYBACK, startPlayback);
+            args.putString(CATEGORY_NAME,categoryName);
 
             PlayerActivityFragment playerActivityFragment = new PlayerActivityFragment();
             playerActivityFragment.setArguments(args);
