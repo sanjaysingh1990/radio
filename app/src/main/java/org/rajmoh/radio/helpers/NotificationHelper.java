@@ -2,10 +2,10 @@
  * NotificationHelper.java
  * Implements the NotificationHelper class
  * A NotificationHelper creates and configures a notification
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -131,6 +131,10 @@ public final class NotificationHelper implements TransistorKeys {
         previousActionIntent.setAction(ACTION_PREVIOUS);
 
 
+        // explicit intent for previous playback
+        Intent closeActionIntent = new Intent(mService, PlayerService.class);
+        closeActionIntent.setAction(ACTION_CLOSE);
+
 
         // artificial back stack for started Activity.
         // -> navigating backward from the Activity leads to Home screen.
@@ -154,6 +158,8 @@ public final class NotificationHelper implements TransistorKeys {
         PendingIntent skipNextActionPendingIntent = PendingIntent.getService(mService, 13, nextActionIntent, 0);
 // pending intent wrapper for notification swipe action
         PendingIntent skipPreviousActionPendingIntent = PendingIntent.getService(mService, 14, previousActionIntent, 0);
+        //TO CLOSE
+        PendingIntent closeActionPendingIntent = PendingIntent.getService(mService, 14, closeActionIntent, 0);
 
 
         // create media style
@@ -175,15 +181,18 @@ public final class NotificationHelper implements TransistorKeys {
         builder.setStyle(style);
         builder.setContentIntent(tapActionPendingIntent);
         builder.setDeleteIntent(swipeActionPendingIntent);
-        builder.addAction(R.drawable.ic_skip_previous, mService.getString(R.string.notification_previous), skipPreviousActionPendingIntent);
 
         if (station.getPlaybackState()) {
-            builder.addAction(R.drawable.ic_stop_white_36dp, mService.getString(R.string.notification_stop), stopActionPendingIntent);
+            builder.addAction(R.drawable.noti_smbl_stop, mService.getString(R.string.notification_stop), stopActionPendingIntent);
 
         } else {
-            builder.addAction(R.drawable.ic_play_arrow_white_36dp, mService.getString(R.string.notification_play), playActionPendingIntent);
+            builder.addAction(R.drawable.noti_smbl_play, mService.getString(R.string.notification_play), playActionPendingIntent);
         }
-        builder.addAction(R.drawable.ic_skip_next, mService.getString(R.string.notification_next),skipNextActionPendingIntent );
+        builder.addAction(R.drawable.ic_skip_previous, mService.getString(R.string.notification_previous), skipPreviousActionPendingIntent);
+
+        builder.addAction(R.drawable.ic_skip_next, mService.getString(R.string.notification_next), skipNextActionPendingIntent);
+        builder.addAction(R.drawable.ic_close_notificaiton, mService.getString(R.string.notification_close), closeActionPendingIntent);
+
 
         return builder;
     }

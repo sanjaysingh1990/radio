@@ -65,7 +65,7 @@ public final class StationContextMenu extends DialogFragment implements Transist
                 switch (item.getItemId()) {
 
                     // CASE ICON
-                    case R.id.menu_icon:
+                   /* case R.id.menu_icon:
                         // send local broadcast (needed by MainActivityFragment)
                         Intent iconIntent = new Intent();
                         iconIntent.setAction(ACTION_IMAGE_CHANGE_REQUESTED);
@@ -79,7 +79,7 @@ public final class StationContextMenu extends DialogFragment implements Transist
                         // construct and run rename dialog
                         DialogRename dialogRename = new DialogRename(mActivity, mStation, mStationID);
                         dialogRename.show();
-                        return true;
+                        return true;*/
 
                     // CASE DELETE
                     case R.id.menu_delete:

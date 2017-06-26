@@ -14,6 +14,7 @@
 
 package org.rajmoh.radio;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -297,10 +298,10 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             LogHelper.e(LOG_TAG, "Service received command:NEXT");
             Log.e("pos", mCurrentPosition + "");
             Log.e("category,", mCategoryName);
-            if (mStationList.size() > 1 && mCurrentPosition < mStationList.size()-1) {
+            if (mStationList.size() > 1 && mCurrentPosition < mStationList.size() - 1) {
                 mCurrentPosition++;
 
-                playNextChannel(mStationList.get(mCurrentPosition),mCurrentPosition,mStationList.get(mCurrentPosition).getStreamUri().toString());
+                playNextChannel(mStationList.get(mCurrentPosition), mCurrentPosition, mStationList.get(mCurrentPosition).getStreamUri().toString());
             }
 
         }
@@ -312,9 +313,26 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             if (mStationList.size() > 0 && mCurrentPosition > 0) {
                 mCurrentPosition--;
 
-                playNextChannel(mStationList.get(mCurrentPosition),mCurrentPosition,mStationList.get(mCurrentPosition).getStreamUri().toString());
+                playNextChannel(mStationList.get(mCurrentPosition), mCurrentPosition, mStationList.get(mCurrentPosition).getStreamUri().toString());
 
             }
+
+        } else if (intent.getAction().equals(ACTION_CLOSE)) {
+            LogHelper.e(LOG_TAG, "Service received command: CLOSE");
+
+
+            if (mPlayback) {
+                mController.getTransportControls().stop();
+            }
+
+            // dismiss notification
+            NotificationHelper.stop();
+            // set media session in-active
+            mSession.setActive(false);
+            //REMOVE NOTIFICATION FROM TRAY
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(PLAYER_SERVICE_NOTIFICATION_ID);
+
 
         }
 
@@ -326,17 +344,17 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         return START_STICKY;
     }
 
-    private void playNextChannel(Station station,int stationid,String uri)
-    {
+    private void playNextChannel(Station station, int stationid, String uri) {
         // get URL of station from intent
-            mStation = station;
-            mStationID = stationid;
-            mStreamUri = uri;
+        mStation = station;
+        mStationID = stationid;
+        mStreamUri = uri;
 
 
         // update controller - start playback
         mController.getTransportControls().play();
     }
+
     @Override
     public void onMetadata(Metadata metadata) {
         LogHelper.v(LOG_TAG, "Got new metadata: " + metadata.toString());

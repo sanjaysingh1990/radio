@@ -26,6 +26,7 @@ public interface TransistorKeys {
     String ACTION_STOP = "org.y20k.transistor.action.STOP";
     String ACTION_DISMISS = "org.y20k.transistor.action.DISMISS";
     String ACTION_NEXT = "org.y20k.transistor.action.NEXT";
+    String ACTION_CLOSE = "org.y20k.transistor.action.CLOSE";
     String ACTION_PREVIOUS = "org.y20k.transistor.action.PREVIOUS";
     String ACTION_PLAYBACK_STATE_CHANGED = "org.y20k.transistor.action.PLAYBACK_STATE_CHANGED";
     String ACTION_CHANGE_VIEW_SELECTION = "org.y20k.transistor.action.CHANGE_VIEW_SELECTION";

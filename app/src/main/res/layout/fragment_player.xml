@@ -125,7 +125,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/circular_button_gradient"
                 android:contentDescription="@string/descr_playback_button"
-                android:padding="32dp"
+
                 android:src="@drawable/smbl_play" />
 
 

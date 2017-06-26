@@ -662,7 +662,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         switch (item.getItemId()) {
 
             // CASE ICON
-            case R.id.menu_icon:
+           /* case R.id.menu_icon:
                 // get system picker for images
                 selectFromImagePicker();
                 return true;
@@ -672,7 +672,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 // construct and run rename dialog
                 final DialogRename dialogRename = new DialogRename(mActivity, mStation, mStationID);
                 dialogRename.show();
-                return true;
+                return true;*/
 
             // CASE DELETE
             case R.id.menu_delete:
