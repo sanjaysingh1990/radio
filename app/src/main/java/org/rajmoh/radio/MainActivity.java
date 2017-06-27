@@ -31,13 +31,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.DataSnapshot;
@@ -178,7 +176,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         loadChannels("hindi");
 
         //load banner ad
-        adView = (AdView)findViewById(R.id.adView);
+        adView = (AdView) findViewById(R.id.adView);
 //load banner ads
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -187,6 +185,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         adView.loadAd(adRequest);
 
 
+        setSupportActionBar(binding.mainContent.toolbar);
     }
 
     @Override
@@ -311,6 +310,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
     @Override
     public void categorySelected(String cateName) {
+
         loadChannels(cateName);
         binding.drawer.closeDrawer(GravityCompat.START);
         binding.drawer.openDrawer(GravityCompat.END);
@@ -362,6 +362,8 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
 
                     }
+
+
                     mAdapter.notifyDataSetChanged();
                     if (mCategoryList.size() == 0) {
                         Util.getInstance().showSnackBar(binding.drawer, getResources().getString(R.string.no_category_available), "", false, null);

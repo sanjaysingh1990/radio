@@ -32,13 +32,14 @@ import java.util.TimeZone;
 public class Util {
     private static Util singleton = new Util();
     private Snackbar snackbar = null;
-    public synchronized static Util getInstance() {
-        return singleton;
-    }
     private DatabaseReference mDatabase;
-
+    private int mCount = 0;
     private Util() {
 
+    }
+
+    public synchronized static Util getInstance() {
+        return singleton;
     }
 
     public int getRadomNumber() {
@@ -62,18 +63,20 @@ public class Util {
                 : coolFormat(d, iteration + 1));
 
     }
-    public String Format(Integer number){
-        String[] suffix = new String[]{"k","m","b","t"};
+
+    public String Format(Integer number) {
+        String[] suffix = new String[]{"k", "m", "b", "t"};
         int size = (number.intValue() != 0) ? (int) Math.log10(number) : 0;
-        if (size >= 3){
+        if (size >= 3) {
             while (size % 3 != 0) {
                 size = size - 1;
             }
         }
         double notation = Math.pow(10, size);
-        String result = (size >= 3) ? + (Math.round((number / notation) * 100) / 100.0d)+suffix[(size/3) - 1] : + number + "";
+        String result = (size >= 3) ? +(Math.round((number / notation) * 100) / 100.0d) + suffix[(size / 3) - 1] : +number + "";
         return result;
     }
+
     public String getDateTime(String startTime) {
         String data = "";
         /*
@@ -151,7 +154,7 @@ public class Util {
         if (context != null) {
             SharedPreferences prefs;
             prefs = context.getSharedPreferences(Constants.FILE_NAME, 0);
-            return prefs.getBoolean(key,defaultValue);
+            return prefs.getBoolean(key, defaultValue);
         } else {
             return false;
         }
@@ -189,7 +192,7 @@ public class Util {
 
     }
 
-    public void showSnackBar(View view, String message, String retrytext,boolean ispermanent,final SnackBarEvent snackBarEvent) {
+    public void showSnackBar(View view, String message, String retrytext, boolean ispermanent, final SnackBarEvent snackBarEvent) {
         snackbar = Snackbar
                 .make(view, message, Snackbar.LENGTH_LONG)
                 .setAction(retrytext, new View.OnClickListener() {
@@ -211,8 +214,8 @@ public class Util {
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.YELLOW);
-        if(ispermanent) //disable autohide if true
-        snackbar.setDuration(Snackbar.LENGTH_INDEFINITE);
+        if (ispermanent) //disable autohide if true
+            snackbar.setDuration(Snackbar.LENGTH_INDEFINITE);
         snackbar.show();
 
     }
@@ -236,15 +239,20 @@ public class Util {
     }
 
 
-public DatabaseReference getDatabaseReference()
-{
-    if(mDatabase==null) {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+    public DatabaseReference getDatabaseReference() {
+        if (mDatabase == null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+        }
+
+        return mDatabase;
     }
 
-    return mDatabase;
+    public void increment() {
+        mCount++;
     }
 
-
+    public int getCount() {
+        return mCount;
+    }
 
 }

@@ -8,7 +8,7 @@
         <item name="colorPrimary">@color/transistor_red</item>
         <item name="colorPrimaryDark">@color/transistor_red_dark</item>
         <item name="colorAccent">@color/transistor_gold_dark</item>
-
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
 </resources>

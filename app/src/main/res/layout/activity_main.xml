@@ -23,10 +23,10 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             tools:context="com.learn2crack.myapplication.MainActivity">
+
             <include
                 android:id="@+id/main_content"
-                layout="@layout/content_player"
-                />
+                layout="@layout/content_player" />
 
         </android.support.design.widget.CoordinatorLayout>
 
@@ -36,12 +36,11 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="#00000000">
+
             <include
                 android:id="@+id/left_drawer_content"
-                layout="@layout/drawer_list_items"
-                />
+                layout="@layout/drawer_list_items" />
         </android.support.design.widget.NavigationView>
-
 
 
         <android.support.design.widget.NavigationView

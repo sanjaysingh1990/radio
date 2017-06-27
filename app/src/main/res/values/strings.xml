@@ -7,6 +7,8 @@
 
     <!-- menu entries -->
     <string name="menu_about">About</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_favorites">Favorites</string>
     <string name="menu_howto">How to use</string>
     <string name="menu_timer">Sleep timer</string>
     <string name="menu_icon">Change icon</string>
@@ -14,6 +16,8 @@
     <string name="menu_delete">Delete</string>
     <string name="menu_rename">Rename</string>
     <string name="menu_shortcut">Place on Home screen</string>
+    <string name="menu_favorite">Favorites</string>
+
 
     <!-- headers -->
     <string name="header_about">About</string>
@@ -118,15 +122,15 @@
     <string name="notification_playing">Playing</string>
 
     <!-- infosheet about -->
-    <string name="infosheet_about_h1_about">About Transistor</string>
+    <string name="infosheet_about_h1_about">About Air Voice</string>
     <string name="infosheet_about_h2_radio">Radio app for Android</string>
-    <string name="infosheet_about_h3_version">Version 2.2 (Sons Of The Silent Age)</string>
-    <string name="infosheet_about_p_bare">Transistor is a bare bones app for listening to radio programs over the internet. The app stores stations as files on your device\'s external storage. Look for files of type m3u within /Android/data/org.y20k.transistor/files/Collection. It currently understands streams encoded in MP3 and OGG.</string>
+    <string name="infosheet_about_h3_version">Version 1.0</string>
+    <string name="infosheet_about_p_bare">Air Voice is a bare bones app for listening to radio programs over the internet. The app stores stations as files on your device\'s external storage. Look for files of type m3u within /Android/data/org.rajmoh.radio/files/Collection. It currently understands streams encoded in MP3 and OGG.</string>
     <string name="infosheet_about_p_note">Important note: This is an app of type BYOS (&quot;bring your own station&quot;). It does not feature any kind of built-in search option. You will have to manually add radio stations.</string>
     <string name="infosheet_about_p_free">Transistor is free software. It is published under the MIT open source license. You can find the code on GitHub. GitHub is also a good place to file bugs or even to contribute, if you are interested.</string>
     <string name="infosheet_about_p_github">https://github.com/y20k/transistor</string>
     <string name="infosheet_about_p_license">https://opensource.org/licenses/MIT</string>
-    <string name="infosheet_about_h2_permissions">Which Permissions does Transistor need?</string>
+    <string name="infosheet_about_h2_permissions">Which Permissions does Air Voice need?</string>
     <string name="infosheet_about_h3_shortcut">Permission INSTALL_SHORTCUT and UNINSTALL_SHORTCUT</string>
     <string name="infosheet_about_p_shortcut">This permission is needed to install and uninstall radio station shortcuts on the Android Home screen.</string>
     <string name="infosheet_about_h3_internet">Permission INTERNET</string>
@@ -176,4 +180,12 @@ https://play.google.com/store/apps/details?id=com.cricit</string>
     https://github.com/y20k/transistor/tree/1e51dd8666194353427ca074f2092b6c20cfacd6/app/src/main/res 
     -->
 
+
+
+    <string name="feedback_heading">Feedback</string>
+    <string name="email_hint">your email</string>
+    <string name="message_hint">your message</string>
+    <string name="submit">Submit</string>
+    <string name="feedback_response">Thank you for your feedback.</string>
+    <string name="banner_ads_id">ca-app-pub-5996879671606073/1331895147</string>
 </resources>

@@ -96,6 +96,10 @@ public final class StationContextMenu extends DialogFragment implements Transist
                         shortcutHelper.placeShortcut(mStation);
                         return true;
                     }
+                    //case add to favorites
+                    case R.id.menu_favorite:
+
+                        return true;
 
                     // CASE DEFAULT
                     default:

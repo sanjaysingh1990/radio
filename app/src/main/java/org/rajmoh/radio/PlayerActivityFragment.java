@@ -58,7 +58,6 @@ import com.google.android.gms.ads.InterstitialAd;
 
 import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.DialogDelete;
-import org.rajmoh.radio.helpers.DialogRename;
 import org.rajmoh.radio.helpers.ImageHelper;
 import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.NotificationHelper;
@@ -66,6 +65,7 @@ import org.rajmoh.radio.helpers.PermissionHelper;
 import org.rajmoh.radio.helpers.ShortcutHelper;
 import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
+import org.rajmoh.radio.utils.Util;
 import org.rajmoh.radio.views.CircularSeekBar;
 
 import java.io.File;
@@ -169,6 +169,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             // get station ID from arguments
             if (arguments.containsKey(ARG_STATION_ID)) {
                 mStationID = arguments.getInt(ARG_STATION_ID);
+                mPosition = mStationID;
                 arguments.remove(ARG_STATION_ID);
             } else {
                 mStationID = 0;
@@ -195,6 +196,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 mCategoryName = arguments.getString(CATEGORY_NAME);
             } else {
                 mCategoryName = "";
+
             }
 
         }
@@ -375,12 +377,12 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mImgNextChannel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mStationList.size() > 1 && mPosition < mStationList.size()-1) {
+                if (mStationList.size() > 1 && mPosition < mStationList.size() - 1) {
                     mPosition++;
-                    Log.e("listsize", mStationList.size() + "'");
-                    Log.e("cpos+", mPosition + "");
-
+                    mImgPreviousChannel.setVisibility(View.VISIBLE);
                     setupNextChannel();
+                } else {
+                    mImgNextChannel.setVisibility(View.GONE);
                 }
             }
         });
@@ -392,10 +394,10 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             public void onClick(View view) {
                 if (mStationList.size() > 0 && mPosition > 0) {
                     mPosition--;
-                    Log.e("listsize", mStationList.size() + "'");
-                    Log.e("cpos+", mPosition + "");
-
+                    mImgNextChannel.setVisibility(View.VISIBLE);
                     setupNextChannel();
+                } else {
+                    mImgPreviousChannel.setVisibility(View.GONE);
                 }
             }
         });
@@ -460,7 +462,10 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         super.onViewCreated(view, savedInstanceState);
         // initialize broadcast receivers
         initializeBroadcastReceivers();
-        initializeAdd();
+        Util.getInstance().increment(); //increase counter for 2's  multiple
+        if (Util.getInstance().getCount() % 2 == 0) {
+            initializeAdd();
+        }
     }
 
 
@@ -612,7 +617,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         intent.setAction(ACTION_PLAY);
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);
-        intent.putExtra(CATEGORY_NAME,mCategoryName);
+        intent.putExtra(CATEGORY_NAME, mCategoryName);
         mActivity.startService(intent);
         LogHelper.v(LOG_TAG, "Starting player service.");
 
@@ -1120,7 +1125,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         mInterstitialAd.setAdListener(new AdListener() {
             public void onAdLoaded() {
-                //mInterstitialAd.show();
+                mInterstitialAd.show();
             }
 
             @Override
@@ -1149,19 +1154,19 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(getActivity());
         File mFolder = storageHelper.getCollectionDirectory();
-        //  Log.e("playerfolder", categoryName);
+        Log.e("playerfolder", categoryName);
         File mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + categoryName);
         //Log.e("playerfolder2", mCategoryFolder.getName());
         // create folder if necessary
         if (!mCategoryFolder.exists()) {
-           // LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
+            // LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
             mCategoryFolder.mkdir();
         }
 
         // create nomedia file to prevent media scanning
         File nomedia = new File(mCategoryFolder, ".nomedia");
         if (!nomedia.exists()) {
-           // LogHelper.v(LOG_TAG, "Creating .nomedia file in folder: " + mCategoryFolder.toString());
+            // LogHelper.v(LOG_TAG, "Creating .nomedia file in folder: " + mCategoryFolder.toString());
 
             try (FileOutputStream noMediaOutStream = new FileOutputStream(nomedia)) {
                 noMediaOutStream.write(0);
@@ -1193,11 +1198,28 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             });
 
 
-            if (mStationList.size() == 1) {
-                mImgNextChannel.setVisibility(View.GONE);
-                mImgPreviousChannel.setVisibility(View.GONE);
-            } else if (mStationList.size() == 2) {
-                mImgPreviousChannel.setVisibility(View.GONE);
+            if (mStationList.size() == 2) {
+                if (mPosition == 0) {
+                    mImgPreviousChannel.setVisibility(View.GONE);
+                    mImgNextChannel.setVisibility(View.VISIBLE);
+                } else if (mPosition == 1) {
+                    mImgNextChannel.setVisibility(View.GONE);
+                    mImgPreviousChannel.setVisibility(View.VISIBLE);
+                }
+            } else if (mStationList.size() > 2) {
+                if (mPosition == 0) {
+                    mImgPreviousChannel.setVisibility(View.GONE);
+                    mImgNextChannel.setVisibility(View.VISIBLE);
+                } else if (mPosition == 1) {
+                    mImgNextChannel.setVisibility(View.GONE);
+                    mImgPreviousChannel.setVisibility(View.VISIBLE);
+                } else if (mPosition == mStationList.size() - 1) {
+                    mImgNextChannel.setVisibility(View.GONE);
+                    mImgPreviousChannel.setVisibility(View.VISIBLE);
+                } else {
+                    mImgNextChannel.setVisibility(View.VISIBLE);
+                    mImgPreviousChannel.setVisibility(View.VISIBLE);
+                }
             }
 
 

@@ -46,7 +46,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.rajmoh.radio.core.Station;
-import org.rajmoh.radio.helpers.DialogAdd;
 import org.rajmoh.radio.helpers.ImageHelper;
 import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.NotificationHelper;
@@ -263,12 +262,6 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                 newFragment.show(getFragmentManager(), "Time Picker");
                 return true;
 
-            // CASE ADD
-            case R.id.menu_add:
-
-                DialogAdd dialog = new DialogAdd(mActivity, mFolder);
-                dialog.show();
-                return true;
 
             // CASE ABOUT
             case R.id.menu_about:
@@ -281,17 +274,18 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                 startActivity(aboutIntent);
                 return true;
 
-            // CASE HOWTO
-            case R.id.menu_howto:
-                // get title and content
-                String howToTitle = mActivity.getString(R.string.header_howto);
-                // put title and content into intent and start activity
-                Intent howToIntent = new Intent(mActivity, InfosheetActivity.class);
-                howToIntent.putExtra(EXTRA_INFOSHEET_TITLE, howToTitle);
-                howToIntent.putExtra(EXTRA_INFOSHEET_CONTENT, INFOSHEET_CONTENT_HOWTO);
-                startActivity(howToIntent);
-                return true;
+            //case feedback
+            case R.id.menu_feedback:
+                Intent feedbackIntent = new Intent(mActivity, FeedBackActivity.class);
+                startActivity(feedbackIntent);
 
+                return true;
+            //case favorites
+            case R.id.menu_favorites:
+                Intent favoritesIntent = new Intent(mActivity, FavoritesActivity.class);
+                startActivity(favoritesIntent);
+
+                return true;
             // CASE DEFAULT
             default:
                 return super.onOptionsItemSelected(item);

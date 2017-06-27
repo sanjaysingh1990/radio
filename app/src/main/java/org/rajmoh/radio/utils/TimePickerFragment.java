@@ -66,7 +66,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
 
         /*.........Set a custom title for picker........*/
         TextView tvTitle = new TextView(getActivity());
-        tvTitle.setText("TimePickerDialog Title");
+        tvTitle.setText("Choose sleep time");
         tvTitle.setBackgroundColor(Color.parseColor("#EEE8AA"));
         tvTitle.setPadding(5, 3, 5, 3);
         tvTitle.setGravity(Gravity.CENTER_HORIZONTAL);
