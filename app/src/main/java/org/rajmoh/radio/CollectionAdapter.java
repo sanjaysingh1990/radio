@@ -133,7 +133,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         // final int position --> Do not treat position as fixed; only use immediately and call holder.getAdapterPosition() to look it up later
         // get station from position
         final Station station = mStationList.get(position);
-
+        Log.e("pbs",station.getPlaybackState()+"");
         if (mTwoPane && mStationIDSelected == position) {
             holder.getListItemLayout().setSelected(true);
         } else {
@@ -271,7 +271,6 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             args.putInt(ARG_STATION_ID, position);
             args.putBoolean(ARG_TWO_PANE, mTwoPane);
             args.putString(CATEGORY_NAME, mFolder.getName());
-
             PlayerActivityFragment playerActivityFragment = new PlayerActivityFragment();
             playerActivityFragment.setArguments(args);
             mActivity.getFragmentManager().beginTransaction()
@@ -285,6 +284,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             intent.putExtra(EXTRA_STATION_ID, position);
             intent.putExtra(EXTRA_FROM, !mIsFavorite);
             intent.putExtra(CATEGORY_NAME, mFolder.getName());
+            Log.e("atadpater",station.getPlaybackState()+"");
 
             mActivity.startActivity(intent);
         }

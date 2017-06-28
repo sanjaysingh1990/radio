@@ -165,6 +165,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             if (arguments.containsKey(ARG_STATION)) {
                 mStation = arguments.getParcelable(ARG_STATION);
                 arguments.remove(ARG_STATION);
+                Log.e("plpbs",mStation.getPlaybackState()+"");
             }
 
             // get station ID from arguments
