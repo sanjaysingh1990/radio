@@ -1,10 +1,13 @@
 package org.rajmoh.radio.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.rajmoh.radio.R;
 import org.rajmoh.radio.callbacks.SnackBarEvent;
 
 import java.text.DateFormat;
@@ -254,5 +258,11 @@ public class Util {
     public int getCount() {
         return mCount;
     }
-
+    public Drawable getDrawable(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return activity.getResources().getDrawable(R.drawable.divider, activity.getTheme());
+        } else {
+            return activity.getResources().getDrawable(R.drawable.divider);
+        }
+    }
 }

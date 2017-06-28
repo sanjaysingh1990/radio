@@ -358,7 +358,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         mStationIDSelected = settings.getInt(PREF_STATION_ID_SELECTED, 0);
         mPlayback = settings.getBoolean(PREF_PLAYBACK, false);
         mStationLoading = settings.getBoolean(PREF_STATION_LOADING, false);
-        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + ")");
+        LogHelper.e(LOG_TAG, "Loading state adapter (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + ")");
     }
 
 
@@ -368,7 +368,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(PREF_STATION_ID_SELECTED, mStationIDSelected);
         editor.apply();
-        LogHelper.v(LOG_TAG, "Saving state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationIDSelected + ")");
+        LogHelper.e(LOG_TAG, "Saving state adapter (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationIDSelected + ")");
     }
 
 
@@ -621,6 +621,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
+                    Log.e("playback","received"+!mIsFavorite);
                     handlePlaybackStateChanged(intent);
                 }
             }

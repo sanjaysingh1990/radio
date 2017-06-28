@@ -529,7 +529,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
         mPlayback = settings.getBoolean(PREF_PLAYBACK, false);
         mTwoPane = settings.getBoolean(PREF_TWO_PANE, false);
         mSleepTimerRunning = settings.getBoolean(PREF_TIMER_RUNNING, false);
-        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
+        LogHelper.e(LOG_TAG, "Loading state frag(" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
     }
 
 
@@ -542,7 +542,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
         editor.putBoolean(PREF_PLAYBACK, mPlayback);
         editor.putBoolean(PREF_TIMER_RUNNING, mSleepTimerRunning);
         editor.apply();
-        LogHelper.v(LOG_TAG, "Saving state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
+        LogHelper.e(LOG_TAG, "Saving state frag(" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + ")");
     }
 
 
@@ -562,7 +562,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-
+                    Log.e("receiverfav","playback");
                     handlePlaybackStateChanges(intent);
                 }
             }
@@ -575,7 +575,6 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-
                     handleCollectionChanges(intent);
                 }
             }

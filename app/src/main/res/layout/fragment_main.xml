@@ -13,7 +13,7 @@
         android:id="@+id/main_recyclerview_collection"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/adView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -23,7 +23,10 @@
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_constraintTop_creator="1"
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp" />
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"

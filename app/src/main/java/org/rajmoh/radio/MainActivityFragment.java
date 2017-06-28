@@ -25,7 +25,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -33,6 +35,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -56,6 +59,7 @@ import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
 import org.rajmoh.radio.utils.DurationSelected;
 import org.rajmoh.radio.utils.TimePickerFragment;
+import org.rajmoh.radio.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -150,7 +154,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         //Log.e("len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,true);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true);
         }
 
         // initialize broadcast receivers
@@ -188,7 +192,11 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                 return true;
             }
         };
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(Util.getInstance().getDrawable(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
+
 
         // attach adapter to list view
         mRecyclerView.setAdapter(mCollectionAdapter);
@@ -196,6 +204,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
         return mRootView;
     }
+
 
 
     @Override
@@ -224,7 +233,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         int folderSize = mFolder.listFiles().length;
         if (mFolderSize != mFolder.listFiles().length) {
             mFolderSize = folderSize;
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,true);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true);
             mRecyclerView.setAdapter(mCollectionAdapter);
         }
 
@@ -608,7 +617,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-                    Log.e("receivermain","playback");
+                    Log.e("receivermain", "playback");
 
                     handlePlaybackStateChanges(intent);
                 }
@@ -622,7 +631,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-                    Log.e("receivermain","collection");
+                    Log.e("receivermain", "collection");
 
                     handleCollectionChanges(intent);
                 }
@@ -699,7 +708,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     /* Handles adding, deleting and renaming of station */
     private void handleCollectionChanges(Intent intent) {
-           // load app state
+        // load app state
         loadAppState(mActivity);
 
         int newStationPosition;
@@ -754,7 +763,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
             // CASE: station was deleted
             case STATION_DELETED:
-                Log.e("collection","changed");
+                Log.e("collection", "changed");
 
                 if (intent.hasExtra(EXTRA_STATION) && intent.hasExtra(EXTRA_STATION_ID)) {
 
@@ -803,7 +812,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         }
 
 
-        mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,true);
+        mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true);
 
         mRecyclerView.setAdapter(mCollectionAdapter);
         onResume();
