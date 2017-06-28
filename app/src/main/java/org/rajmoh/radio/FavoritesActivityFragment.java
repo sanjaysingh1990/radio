@@ -99,7 +99,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
     private SleepTimerService mSleepTimerService;
     private String mSleepTimerNotificationMessage;
     private Snackbar mSleepTimerNotification;
-
+  
 
     /* Constructor (default) */
     public FavoritesActivityFragment() {

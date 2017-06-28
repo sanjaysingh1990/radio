@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -36,8 +37,9 @@
                  />
         </android.support.v7.widget.Toolbar>
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+
+
+        <fragment
             android:id="@+id/fragment_main"
             android:name="org.rajmoh.radio.FavoritesActivityFragment"
             android:layout_width="match_parent"
@@ -45,6 +47,33 @@
             android:layout_marginTop="?attr/actionBarSize"
             tools:context="org.rajmoh.radio.MainActivityFragment"
             tools:layout="@layout/fragment_main" />
+
+        <LinearLayout
+            android:id="@+id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:visibility="gone"
+            >
+       <ImageView
+           android:layout_width="100dp"
+           android:layout_height="100dp"
+           android:layout_gravity="center_horizontal"
+           android:src="@drawable/ic_favorite_red_icon"
+           />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="No Favorates"
+                android:layout_marginTop="20dp"
+                android:textColor="@drawable/ic_radio_black"
+                android:textStyle="bold"
+                android:textSize="18sp"
+
+                />
+        </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 
