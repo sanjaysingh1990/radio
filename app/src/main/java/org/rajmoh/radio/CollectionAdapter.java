@@ -69,14 +69,15 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     private int mStationIDLast;
     private int mStationIDSelected;
     private boolean mTwoPane;
-
+    private boolean mIsFavorite;
 
     /* Constructor */
-    public CollectionAdapter(Activity activity, File folder) {
+    public CollectionAdapter(Activity activity, File folder, boolean isFavorite) {
         // set main variables
         mActivity = activity;
         mFolder = folder;
         mStationIDSelected = 0;
+        mIsFavorite = isFavorite;
         mStationList = new SortedList<Station>(Station.class, new SortedListAdapterCallback<Station>(this) {
 
             @Override
@@ -175,8 +176,8 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                 @Override
                 public void onClick(View view) {
                     StationContextMenu menu = new StationContextMenu();
-                    menu.initialize(mActivity, view, station, position);
-                    menu.show();
+                    menu.initialize(mActivity, view, station, position, mFolder.getName());
+                    menu.show(mIsFavorite);
                 }
             });
         } else {
@@ -282,6 +283,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             intent.setAction(ACTION_SHOW_PLAYER);
             intent.putExtra(EXTRA_STATION, station);
             intent.putExtra(EXTRA_STATION_ID, position);
+            intent.putExtra(EXTRA_FROM, !mIsFavorite);
             intent.putExtra(CATEGORY_NAME, mFolder.getName());
 
             mActivity.startActivity(intent);
@@ -380,7 +382,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     public void setStationIDSelected(int stationIDSelected, boolean playbackState, boolean startPlayback) {
 
         mStationIDSelected = stationIDSelected;
-        saveAppState(mActivity);
+       // saveAppState(mActivity);
         if (mStationIDSelected >= 0 && mStationIDSelected < mStationList.size()) {
             mStationList.get(stationIDSelected).setPlaybackState(playbackState);
         }
@@ -623,7 +625,11 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                 }
             }
         };
-        IntentFilter playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
+        IntentFilter playbackStateChangedIntentFilter;
+        if (!mIsFavorite)
+            playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+        else
+            playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(mPlaybackStateChangedReceiver, playbackStateChangedIntentFilter);
     }
 

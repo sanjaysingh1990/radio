@@ -2,10 +2,10 @@
  * StationContextMenu.java
  * Implements the StationContextMenu class
  * The StationContextMenu allows manipulation of station objects, eg. rename or delete
- *
+ * <p>
  * This file is part of
  * TRANSISTOR - Radio App for Android
- *
+ * <p>
  * Copyright (c) 2015-17 - Y20K.org
  * Licensed under the MIT-License
  * http://opensource.org/licenses/MIT
@@ -16,14 +16,20 @@ package org.rajmoh.radio.helpers;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 
 import org.rajmoh.radio.R;
 import org.rajmoh.radio.core.Station;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 /**
@@ -37,27 +43,53 @@ public final class StationContextMenu extends DialogFragment implements Transist
     private Activity mActivity;
     private Station mStation;
     private int mStationID;
-
+    private String mCurrentFolder;
 
     /* Constructor (default) */
     public StationContextMenu() {
     }
 
+    void copy(File src, File dest) throws IOException {
+
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(src);
+            os = new FileOutputStream(dest); // buffer size 1K
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = is.read(buf)) > 0) {
+                os.write(buf, 0, bytesRead);
+            }
+        } finally {
+            if (is != null)
+                is.close();
+            if (os != null)
+                os.close();
+        }
+
+    }
+
 
     /* Initializer for main class variables */
-    public void initialize(Activity activity, View view, Station station, int stationID) {
+    public void initialize(Activity activity, View view, Station station, int stationID, String currentFolder) {
         mActivity = activity;
         mView = view;
         mStation = station;
         mStationID = stationID;
+        mCurrentFolder = currentFolder;
     }
 
-
     /* Displays context menu */
-    public void show() {
+    public void show(final boolean isFavorite) {
+        Log.e("curpath", mCurrentFolder + "'");
 
         PopupMenu popup = new PopupMenu(mActivity, mView);
-        popup.inflate(R.menu.menu_main_list_item);
+        if (isFavorite)
+            popup.inflate(R.menu.menu_main_list_item);
+        else
+            popup.inflate(R.menu.menu_main_list_item2);
+
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -85,7 +117,7 @@ public final class StationContextMenu extends DialogFragment implements Transist
                     case R.id.menu_delete:
                         // construct and run delete dialog
                         DialogDelete dialogDelete = new DialogDelete(mActivity, mStation, mStationID);
-                        dialogDelete.show();
+                        dialogDelete.show(isFavorite);
                         return true;
 
                     // CASE SHORTCUT
@@ -98,7 +130,20 @@ public final class StationContextMenu extends DialogFragment implements Transist
                     }
                     //case add to favorites
                     case R.id.menu_favorite:
+                        // get collection folder
+                        StorageHelper storageHelper = new StorageHelper(mActivity);
+                        File mCollectionFolder = storageHelper.getCollectionDirectory();
+                        File sourceFile = new File(mCollectionFolder.getAbsolutePath() + "/" + mCurrentFolder + "/" + mStation.getStationName() + ".m3u");
 
+                        File destinationFile = new File(mCollectionFolder.getAbsolutePath() + "/favorites/" + mStation.getStationName() + ".m3u");
+
+                        Log.e("sourcefile", sourceFile.getAbsolutePath());
+                        Log.e("destinationfile", destinationFile.getAbsolutePath());
+                        try {
+                            copy(sourceFile, destinationFile);
+                        } catch (IOException ex) {
+                            Log.e("ioexception", ex.getLocalizedMessage() + "");
+                        }
                         return true;
 
                     // CASE DEFAULT
@@ -109,5 +154,4 @@ public final class StationContextMenu extends DialogFragment implements Transist
         });
         popup.show();
     }
-
 }

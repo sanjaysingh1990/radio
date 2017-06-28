@@ -66,10 +66,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * MainActivityFragment class
  */
-public final class MainActivityFragment extends Fragment implements TransistorKeys {
+public final class FavoritesActivityFragment extends Fragment implements TransistorKeys {
 
     /* Define log tag */
-    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static final String LOG_TAG = FavoritesActivityFragment.class.getSimpleName();
 
 
     /* Main class variables */
@@ -102,7 +102,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
 
     /* Constructor (default) */
-    public MainActivityFragment() {
+    public FavoritesActivityFragment() {
     }
 
 
@@ -140,7 +140,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(mActivity);
-        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/Hindi");
+        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/favorites");
         if (mFolder == null) {
             Toast.makeText(mActivity, mActivity.getString(R.string.toastalert_no_external_storage), Toast.LENGTH_LONG).show();
             mActivity.finish();
@@ -150,7 +150,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         //Log.e("len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,true);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,false);
         }
 
         // initialize broadcast receivers
@@ -224,7 +224,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         int folderSize = mFolder.listFiles().length;
         if (mFolderSize != mFolder.listFiles().length) {
             mFolderSize = folderSize;
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,true);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,false);
             mRecyclerView.setAdapter(mCollectionAdapter);
         }
 
@@ -245,53 +245,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-
-            // CASE TIMER
-            case R.id.menu_timer:
-
-                DialogFragment newFragment = new TimePickerFragment(new DurationSelected() {
-                    @Override
-                    public void durationSelected(long duration) {
-                        handleMenuSleepTimerClick(duration);
-                    }
-                });
-                newFragment.show(getFragmentManager(), "Time Picker");
-                return true;
-
-
-            // CASE ABOUT
-            case R.id.menu_about:
-                // get title and content
-                String aboutTitle = mActivity.getString(R.string.header_about);
-                // put title and content into intent and start activity
-                Intent aboutIntent = new Intent(mActivity, InfosheetActivity.class);
-                aboutIntent.putExtra(EXTRA_INFOSHEET_TITLE, aboutTitle);
-                aboutIntent.putExtra(EXTRA_INFOSHEET_CONTENT, INFOSHEET_CONTENT_ABOUT);
-                startActivity(aboutIntent);
-                return true;
-
-            //case feedback
-            case R.id.menu_feedback:
-                Intent feedbackIntent = new Intent(mActivity, FeedBackActivity.class);
-                startActivity(feedbackIntent);
-
-                return true;
-            //case favorites
-            case R.id.menu_favorites:
-                Intent favoritesIntent = new Intent(mActivity, FavoritesActivity.class);
-                startActivity(favoritesIntent);
-
-                return true;
-            // CASE DEFAULT
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
 
 
     @Override
@@ -608,13 +562,12 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-                    Log.e("receivermain","playback");
 
                     handlePlaybackStateChanges(intent);
                 }
             }
         };
-        IntentFilter playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
+        IntentFilter playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(mPlaybackStateChangedReceiver, playbackStateChangedIntentFilter);
 
         // RECEIVER: station added, deleted, or changed
@@ -622,13 +575,12 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-                    Log.e("receivermain","collection");
 
                     handleCollectionChanges(intent);
                 }
             }
         };
-        IntentFilter collectionChangedIntentFilter = new IntentFilter(ACTION_COLLECTION_CHANGED);
+        IntentFilter collectionChangedIntentFilter = new IntentFilter(ACTION_COLLECTION_CHANGED_FAVORITE);
         LocalBroadcastManager.getInstance(mApplication).registerReceiver(mCollectionChangedReceiver, collectionChangedIntentFilter);
 
         // RECEIVER: listen for request to change station image
@@ -699,7 +651,8 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     /* Handles adding, deleting and renaming of station */
     private void handleCollectionChanges(Intent intent) {
-           // load app state
+
+        // load app state
         loadAppState(mActivity);
 
         int newStationPosition;
@@ -754,7 +707,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
             // CASE: station was deleted
             case STATION_DELETED:
-                Log.e("collection","changed");
+                Log.e("collection","changed2");
 
                 if (intent.hasExtra(EXTRA_STATION) && intent.hasExtra(EXTRA_STATION_ID)) {
 
@@ -790,38 +743,5 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void updateList(String folder) {
 
-        Log.e("updated", "yes");
-        // get collection folder
-        StorageHelper storageHelper = new StorageHelper(mActivity);
-        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/" + folder);
-        if (mFolder == null) {
-            Toast.makeText(mActivity, mActivity.getString(R.string.toastalert_no_external_storage), Toast.LENGTH_LONG).show();
-            mActivity.finish();
-        }
-
-
-        mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,true);
-
-        mRecyclerView.setAdapter(mCollectionAdapter);
-        onResume();
-
-
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
 }

@@ -82,10 +82,11 @@
         <activity
             android:name="org.rajmoh.radio.FavoritesActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:label="@string/app_name"
+            android:label="@string/favorites"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+           >
 
             </activity>
 

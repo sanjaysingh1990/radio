@@ -29,8 +29,10 @@ public interface TransistorKeys {
     String ACTION_CLOSE = "org.y20k.transistor.action.CLOSE";
     String ACTION_PREVIOUS = "org.y20k.transistor.action.PREVIOUS";
     String ACTION_PLAYBACK_STATE_CHANGED = "org.y20k.transistor.action.PLAYBACK_STATE_CHANGED";
+    String ACTION_PLAYBACK_STATE_CHANGED_FAVORITE = "org.y20k.transistor.action.PLAYBACK_STATE_CHANGED_FAVORITE";
     String ACTION_CHANGE_VIEW_SELECTION = "org.y20k.transistor.action.CHANGE_VIEW_SELECTION";
     String ACTION_COLLECTION_CHANGED = "org.y20k.transistor.action.COLLECTION_CHANGED";
+    String ACTION_COLLECTION_CHANGED_FAVORITE = "org.y20k.transistor.action.COLLECTION_CHANGED_FAVORITE";
     String ACTION_IMAGE_CHANGE_REQUESTED = "org.y20k.transistor.action.IMAGE_CHANGE_REQUESTED";
     String ACTION_METADATA_CHANGED = "org.y20k.transistor.action.METADATA_CHANGED";
     String ACTION_SHOW_PLAYER = "org.y20k.transistor.action.SHOW_PLAYER";
@@ -40,6 +42,7 @@ public interface TransistorKeys {
 
     /* EXTRAS */
     String EXTRA_COLLECTION_CHANGE = "COLLECTION_CHANGE";
+    String EXTRA_COLLECTION_CHANGE_FAVORITE = "COLLECTION_CHANGE_FAVORITE";
     String EXTRA_INFOSHEET_TITLE = "INFOSHEET_TITLE";
     String EXTRA_INFOSHEET_CONTENT = "INFOSHEET_CONTENT";
     String EXTRA_METADATA = "METADATA";
@@ -47,6 +50,7 @@ public interface TransistorKeys {
     String EXTRA_PLAYBACK_STATE = "PLAYBACK_STATE";
     String EXTRA_STATION = "STATION";
     String EXTRA_STATION_ID = "STATION_ID";
+    String EXTRA_FROM="from";
     String EXTRA_LAST_STATION = "LAST_STATION";
     String EXTRA_STATION_NEW_NAME = "STATION_NEW_NAME";
     String EXTRA_STREAM_URI = "STREAM_URI";
@@ -107,5 +111,6 @@ public interface TransistorKeys {
 
 
     String CATEGORY_NAME="category_name";
+    String IS_FAVORITE="isFavorite";
 
 }

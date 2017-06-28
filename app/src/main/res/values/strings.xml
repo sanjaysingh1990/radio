@@ -2,6 +2,7 @@
 <resources>
     <!-- activities -->
     <string name="app_name">Air Voice</string> <!-- please do not translate app_name - transcription into different alphabet types is fine though -->
+    <string name="favorites">Favorites</string> <!-- please do not translate app_name - transcription into different alphabet types is fine though -->
     <string name="title_activity_player">Now Playing</string>
     <string name="title_activity_infosheet">Info Sheet</string>
 

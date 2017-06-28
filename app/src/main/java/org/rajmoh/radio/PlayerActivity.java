@@ -31,7 +31,7 @@ public final class PlayerActivity extends AppCompatActivity implements Transisto
 
     /* Define log tag */
     private static final String LOG_TAG = PlayerActivity.class.getSimpleName();
-
+    private boolean mIsFavorite=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +81,18 @@ public final class PlayerActivity extends AppCompatActivity implements Transisto
                 categoryName=intent.getStringExtra(CATEGORY_NAME);
             }
 
+            if(intent.hasExtra(EXTRA_FROM))
+            {
+                mIsFavorite=intent.getBooleanExtra(EXTRA_FROM,false);
+            }
+
             // create bundle for player activity fragment
             Bundle args = new Bundle();
             args.putParcelable(ARG_STATION, station);
             args.putInt(ARG_STATION_ID, stationID);
             args.putBoolean(ARG_PLAYBACK, startPlayback);
             args.putString(CATEGORY_NAME,categoryName);
+            args.putBoolean(IS_FAVORITE,mIsFavorite);
 
             PlayerActivityFragment playerActivityFragment = new PlayerActivityFragment();
             playerActivityFragment.setArguments(args);
@@ -111,9 +117,11 @@ public final class PlayerActivity extends AppCompatActivity implements Transisto
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent playerIntent = new Intent(this, MainActivity.class);
-        startActivity(playerIntent);
-    }
+        if(!mIsFavorite) {
+            Intent playerIntent = new Intent(this, MainActivity.class);
+            startActivity(playerIntent);
+        }
+        }
 
 
     @Override

@@ -121,6 +121,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
     private boolean mPlayback;
     private boolean mStationLoading;
     private boolean mStationMetadataReceived;
+    private boolean mIsFavorite;
     /**
      * Callback: Callback from IcyInputStream reacting to new metadata
      */
@@ -247,6 +248,11 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             mCategoryName = intent.getExtras().getString(CATEGORY_NAME);
             loadCollection(mCategoryName);
         }
+        if (intent.getExtras() != null && intent.hasExtra(IS_FAVORITE)) {
+            mIsFavorite = intent.getExtras().getBoolean(IS_FAVORITE,false);
+
+        }
+
 
         // checking for empty intent
         if (intent == null) {
@@ -374,7 +380,11 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     saveAppState();
                     // send local broadcast: buffering
                     Intent intent = new Intent();
-                    intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
+                    if(mIsFavorite)
+                    intent.setAction(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+                    else
+                        intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
+
                     intent.putExtra(EXTRA_PLAYBACK_STATE_CHANGE, PLAYBACK_LOADING_STATION);
                     intent.putExtra(EXTRA_STATION, mStation);
                     intent.putExtra(EXTRA_STATION_ID, mStationID);
@@ -404,8 +414,11 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     saveAppState();
                     // send local broadcast: buffering finished - playback started
                     Intent intent = new Intent();
-                    intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
-                    intent.putExtra(EXTRA_PLAYBACK_STATE_CHANGE, PLAYBACK_STARTED);
+                    if(mIsFavorite)
+                        intent.setAction(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+                    else
+                        intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
+                     intent.putExtra(EXTRA_PLAYBACK_STATE_CHANGE, PLAYBACK_STARTED);
                     intent.putExtra(EXTRA_STATION, mStation);
                     intent.putExtra(EXTRA_STATION_ID, mStationID);
                     LocalBroadcastManager.getInstance(this.getApplication()).sendBroadcast(intent);
@@ -622,7 +635,10 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
         // send local broadcast: buffering
         Intent intent = new Intent();
-        intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
+        if(mIsFavorite)
+            intent.setAction(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+        else
+            intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
         intent.putExtra(EXTRA_PLAYBACK_STATE_CHANGE, PLAYBACK_LOADING_STATION);
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);
@@ -679,7 +695,10 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
         // send local broadcast: playback stopped
         Intent intent = new Intent();
-        intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
+        if(mIsFavorite)
+            intent.setAction(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+        else
+            intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
         intent.putExtra(EXTRA_PLAYBACK_STATE_CHANGE, PLAYBACK_STOPPED);
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);

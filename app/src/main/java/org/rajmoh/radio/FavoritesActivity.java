@@ -27,14 +27,13 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.rajmoh.radio.databinding.ActivityFavoritesBinding;
 import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.StorageHelper;
@@ -65,7 +64,7 @@ public final class FavoritesActivity extends AppCompatActivity implements Transi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setTitle(getResources().getString(R.string.favorites));
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(this);
         mCollectionFolder = storageHelper.getCollectionDirectory();
@@ -103,6 +102,7 @@ public final class FavoritesActivity extends AppCompatActivity implements Transi
                 .build();
         adView.loadAd(adRequest);
 
+        EventBus.getDefault().post(new Boolean(true));// update is favorite
 
     }
 
@@ -146,15 +146,6 @@ public final class FavoritesActivity extends AppCompatActivity implements Transi
         super.onNewIntent(intent);
         // activity opened for second time set intent to new intent
         setIntent(intent);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main_actionbar, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
 

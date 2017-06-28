@@ -134,6 +134,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     private ImageView mImgPreviousChannel;
     private ImageView mImgNextChannel;
     private int mPosition = 0;
+    private boolean mIsFavorite;
 
     /* Constructor (default) */
     public PlayerActivityFragment() {
@@ -196,6 +197,13 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 mCategoryName = arguments.getString(CATEGORY_NAME);
             } else {
                 mCategoryName = "";
+
+            }
+
+            if (arguments.containsKey(IS_FAVORITE)) {
+                mIsFavorite = arguments.getBoolean(IS_FAVORITE,false);
+            } else {
+                mIsFavorite=false;
 
             }
 
@@ -618,6 +626,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);
         intent.putExtra(CATEGORY_NAME, mCategoryName);
+        intent.putExtra(IS_FAVORITE,mIsFavorite);
         mActivity.startService(intent);
         LogHelper.v(LOG_TAG, "Starting player service.");
 
@@ -688,7 +697,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 //                LogHelper.v(LOG_TAG, "Stopping player service.");
                 // construct and run delete dialog
                 DialogDelete dialogDelete = new DialogDelete(mActivity, mStation, mStationID);
-                dialogDelete.show();
+                dialogDelete.show(false);
                 return true;
 
             // CASE SHORTCUT
@@ -806,6 +815,8 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     /* Set button symbol and playback indicator */
     private void setVisualState() {
 
+        LogHelper.e(LOG_TAG, "set visual state (" + mPlayback + " / " + mStation.getStationName() + " / " + mStation.getPlaybackState() + ")");
+
         // this station is running
 //        if (mPlayback && mStationID == mStationIDCurrent) {
         if (mPlayback && mStation != null && mStation.getPlaybackState()) {
@@ -866,7 +877,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mStationBitRate = settings.getInt(PREF_STATION_BIT_RATE, -1);
         mPlayback = settings.getBoolean(PREF_PLAYBACK, false);
         mStationLoading = settings.getBoolean(PREF_STATION_LOADING, false);
-        LogHelper.v(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationMetadata + ")");
+        LogHelper.e(LOG_TAG, "Loading state (" + mStationIDCurrent + " / " + mStationIDLast + " / " + mPlayback + " / " + mStationLoading + " / " + mStationMetadata + ")");
     }
 
 
@@ -929,6 +940,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
+
                     handlePlaybackStateChanges(intent);
                 }
             }
@@ -941,7 +953,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-                    handleCollectionChanges(intent);
+                     handleCollectionChanges(intent);
                 }
             }
         };
@@ -1125,7 +1137,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         mInterstitialAd.setAdListener(new AdListener() {
             public void onAdLoaded() {
-                mInterstitialAd.show();
+                //mInterstitialAd.show();
             }
 
             @Override
@@ -1226,5 +1238,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         }
 
     }
+
+
 
 }
