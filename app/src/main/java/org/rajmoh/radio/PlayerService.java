@@ -332,7 +332,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             }
 
             // dismiss notification
-            NotificationHelper.stop();
+           // NotificationHelper.stop();
             // set media session in-active
             mSession.setActive(false);
             //REMOVE NOTIFICATION FROM TRAY
@@ -358,7 +358,9 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
 
         // update controller - start playback
+        mController.getTransportControls().stop();
         mController.getTransportControls().play();
+
     }
 
     @Override
@@ -368,11 +370,11 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+       Log.e("playbackstate",playbackState+"");
         switch (playbackState) {
             case STATE_BUFFERING:
                 // The player is not able to immediately play from the current position.
-                LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: BUFFERING");
+                LogHelper.e(LOG_TAG, "State of ExoPlayer has changed: BUFFERING");
                 mStationLoading = true;
                 if (mPlayback) {
                     // set loading state
@@ -406,7 +408,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
             case STATE_READY:
                 // The player is able to immediately play from the current position.
-                LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: READY");
+                LogHelper.e(LOG_TAG, "State of ExoPlayer has changed: READY");
 
                 if (mPlayback && mStationLoading) {
                     // set loading state
@@ -414,7 +416,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     saveAppState();
                     // send local broadcast: buffering finished - playback started
                     Intent intent = new Intent();
-                    if(mIsFavorite)
+                   if(mIsFavorite)
                         intent.setAction(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
                     else
                         intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);

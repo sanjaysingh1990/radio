@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -26,18 +27,30 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-            <TextView
+            <ImageView
+                android:id="@+id/image_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:id="@+id/text_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
                 android:text="@string/favorites"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:textStyle="bold"
+                android:paddingLeft="30dp"
 
-                 />
+
+                />
         </android.support.v7.widget.Toolbar>
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <fragment
             android:id="@+id/fragment_main"
             android:name="org.rajmoh.radio.FavoritesActivityFragment"
             android:layout_width="match_parent"
@@ -45,6 +58,7 @@
             android:layout_marginTop="?attr/actionBarSize"
             tools:context="org.rajmoh.radio.MainActivityFragment"
             tools:layout="@layout/fragment_main" />
+
 
     </android.support.design.widget.CoordinatorLayout>
 

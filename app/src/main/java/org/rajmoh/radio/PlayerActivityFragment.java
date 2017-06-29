@@ -65,6 +65,7 @@ import org.rajmoh.radio.helpers.PermissionHelper;
 import org.rajmoh.radio.helpers.ShortcutHelper;
 import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
+import org.rajmoh.radio.utils.Constants;
 import org.rajmoh.radio.utils.Util;
 import org.rajmoh.radio.views.CircularSeekBar;
 
@@ -165,7 +166,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             if (arguments.containsKey(ARG_STATION)) {
                 mStation = arguments.getParcelable(ARG_STATION);
                 arguments.remove(ARG_STATION);
-                Log.e("plpbs",mStation.getPlaybackState()+"");
+                Log.e("plpbs", mStation.getPlaybackState() + "");
             }
 
             // get station ID from arguments
@@ -202,9 +203,9 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             }
 
             if (arguments.containsKey(IS_FAVORITE)) {
-                mIsFavorite = arguments.getBoolean(IS_FAVORITE,false);
+                mIsFavorite = arguments.getBoolean(IS_FAVORITE, false);
             } else {
-                mIsFavorite=false;
+                mIsFavorite = false;
 
             }
 
@@ -627,7 +628,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);
         intent.putExtra(CATEGORY_NAME, mCategoryName);
-        intent.putExtra(IS_FAVORITE,mIsFavorite);
+        intent.putExtra(IS_FAVORITE, mIsFavorite);
         mActivity.startService(intent);
         LogHelper.v(LOG_TAG, "Starting player service.");
 
@@ -867,7 +868,14 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
     /* Loads app state from preferences */
     private void loadAppState(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+       // SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences settings;
+       /* if (mIsFavorite)
+            settings = mActivity.getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
+        else*/
+
+            settings = PreferenceManager.getDefaultSharedPreferences(context);
+
         mStationIDCurrent = settings.getInt(PREF_STATION_ID_CURRENTLY_PLAYING, -1);
         mStationIDLast = settings.getInt(PREF_STATION_ID_LAST, -1);
         mStationID = settings.getInt(PREF_STATION_ID_SELECTED, 0);
@@ -946,7 +954,12 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 }
             }
         };
-        IntentFilter playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
+        IntentFilter playbackStateChangedIntentFilter;
+        if (mIsFavorite)
+            playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+        else
+            playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
+
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(mPlaybackStateChangedReceiver, playbackStateChangedIntentFilter);
 
         // RECEIVER: station added, deleted, or changed
@@ -954,7 +967,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-                     handleCollectionChanges(intent);
+                    handleCollectionChanges(intent);
                 }
             }
         };
@@ -992,7 +1005,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         // get station from intent
         Station station = intent.getParcelableExtra(EXTRA_STATION);
-
+        Log.e("curstate", intent.getIntExtra(EXTRA_PLAYBACK_STATE_CHANGE, 1) + "");
         switch (intent.getIntExtra(EXTRA_PLAYBACK_STATE_CHANGE, 1)) {
 
             // CASE: player is preparing stream
@@ -1239,7 +1252,6 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         }
 
     }
-
 
 
 }

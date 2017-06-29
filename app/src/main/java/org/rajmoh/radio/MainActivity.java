@@ -31,6 +31,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -43,6 +44,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.rajmoh.radio.adapters.RecyclerCategoryAdapter;
 import org.rajmoh.radio.adapters.RecyclerChannelsAdapter;
 import org.rajmoh.radio.callbacks.CategorySelectedCallback;
@@ -83,6 +86,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     private ArrayList<ChannelInfo> mChannelList;
     private String mDirectoryName;
     private AdView adView;
+    private String mPreviousCategory = "hindi";
 
 
     @Override
@@ -310,29 +314,31 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
     @Override
     public void categorySelected(String cateName) {
+        binding.drawer.closeDrawer(GravityCompat.START); // close left category drawer
 
-        loadChannels(cateName);
-        binding.drawer.closeDrawer(GravityCompat.START);
-        binding.drawer.openDrawer(GravityCompat.END);
-        binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
-        mDirectoryName = cateName;
-        StorageHelper storageHelper = new StorageHelper(this);
-        mFolder = storageHelper.getCollectionDirectory();
-        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + cateName);
-        if (!mCategoryFolder.exists())
-            mCategoryFolder.mkdirs();
-        EventBus.getDefault().post(new String(cateName));// hide search progress if running
-        Intent intent = new Intent(this, PlayerService.class);
-        intent.setAction(ACTION_STOP);
-        startService(intent);
-
+        if (mPreviousCategory.compareToIgnoreCase(cateName) != 0) {
+            loadChannels(cateName);
+            binding.drawer.openDrawer(GravityCompat.END);
+            binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
+            mDirectoryName = cateName;
+            StorageHelper storageHelper = new StorageHelper(this);
+            mFolder = storageHelper.getCollectionDirectory();
+            mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + cateName);
+            if (!mCategoryFolder.exists())
+                mCategoryFolder.mkdirs();
+            EventBus.getDefault().post(new String(cateName));// hide search progress if running
+            Intent intent = new Intent(this, PlayerService.class);
+            intent.setAction(ACTION_STOP);
+            startService(intent);
+        }
+        mPreviousCategory = cateName;
 
     }
 
     private void loadFromServer() {
         if (Util.getInstance().isOnline(this)) {
             //  activityFavoriteBinding.progressbar.setVisibility(View.VISIBLE);
-
+            binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.VISIBLE);
             //get device id
            /* String android_id = Util.getInstance().getDeviceId(FavoriteActivity.this);
             String favoritebranch="UserFavorites";
@@ -343,9 +349,11 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
             Util.getInstance().getDatabaseReference().child("cate").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.GONE);
 
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         CategoryModel item = noteDataSnapshot.getValue(CategoryModel.class);
+
                         // Log.e("data",item.getCate_name());
                         mCategoryList.add(item);
                         //save to favorite to database
@@ -373,6 +381,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.GONE);
                     //Log.e("error", databaseError.getMessage());
                     Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
@@ -399,6 +408,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         if (Util.getInstance().isOnline(this)) {
             mChannelList.clear();
             mChannelsAdapter.notifyDataSetChanged();
+            showProgress();
             //  activityFavoriteBinding.progressbar.setVisibility(View.VISIBLE);
 
             //get device id
@@ -459,7 +469,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                     loadFromServer();
                 }
             });
-            hideProgress();
+
 
         }
     }
@@ -484,5 +494,28 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         binding.rightDrawerContent.progressbar.setVisibility(View.GONE);
         binding.rightDrawerContent.textLoading.setVisibility(View.GONE);
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addChannel(Character c) {
+
+
+        binding.drawer.openDrawer(GravityCompat.END);
+
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }
