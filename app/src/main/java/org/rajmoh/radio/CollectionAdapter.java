@@ -45,7 +45,6 @@ import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.ShortcutHelper;
 import org.rajmoh.radio.helpers.StationContextMenu;
 import org.rajmoh.radio.helpers.TransistorKeys;
-import org.rajmoh.radio.utils.Constants;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -180,10 +179,10 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         } else {
             holder.getPlaybackIndicator().setVisibility(View.GONE);
         }
-        Log.e("data1", "called" + !mTwoPane);
-        Log.e("data2", "called" + mPlayback);
-        Log.e("data3", "called" + station.getPlaybackState());
-        Log.e("data4", "called" + (mStationIDCurrent == position));
+        //"data1", "called" + !mTwoPane);
+        //"data2", "called" + mPlayback);
+        //"data3", "called" + station.getPlaybackState());
+        //"data4", "called" + (mStationIDCurrent == position));
 
         // attach three dots menu - in phone view only
         if (!mTwoPane) {
@@ -237,7 +236,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Fills sorted list of station */
     private void loadCollection() {
-        Log.e("loadedfolder", mFolder.getName());
+        //"loadedfolder", mFolder.getName());
         // create folder if necessary
         if (!mFolder.exists()) {
             LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
@@ -304,7 +303,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             intent.putExtra(EXTRA_STATION_ID, position);
             intent.putExtra(EXTRA_FROM, !mIsFavorite);
             intent.putExtra(CATEGORY_NAME, mFolder.getName());
-            Log.e("atadpater", station.getPlaybackState() + "");
+            //"atadpater", station.getPlaybackState() + "");
 
             mActivity.startActivity(intent);
         }
@@ -372,11 +371,11 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     /* Loads app state from preferences */
     private void loadAppState(Context context) {
         SharedPreferences settings;
-      /*  if (!mIsFavorite)
+      /* if (!mIsFavorite)
             settings = mActivity.getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
         else*/
 
-            settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
         mTwoPane = settings.getBoolean(PREF_TWO_PANE, false);
         mStationIDCurrent = settings.getInt(PREF_STATION_ID_CURRENTLY_PLAYING, -1);
         mStationIDLast = settings.getInt(PREF_STATION_ID_LAST, -1);
@@ -390,11 +389,11 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     /* Saves app state to SharedPreferences */
     private void saveAppState(Context context) {
         SharedPreferences settings;
-       /* if (!mIsFavorite)
+       /*if (!mIsFavorite)
             settings = mActivity.getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
         else*/
 
-            settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
 
         // SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = settings.edit();
@@ -597,6 +596,10 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Handles changes in state of playback, eg. start, stop, loading stream */
     private void handlePlaybackStateChanged(Intent intent) {
+        for (int pos = 0; pos < mStationList.size(); pos++) {
+            mStationList.get(pos).setPlaybackState(false);
+            notifyItemChanged(pos);
+        }
 
         // load app state
         loadAppState(mActivity);
@@ -607,16 +610,18 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
             // get station ID from intent
             int stationID = intent.getIntExtra(EXTRA_STATION_ID, 0);
-           switch (intent.getIntExtra(EXTRA_PLAYBACK_STATE_CHANGE, 1)) {
+            switch (intent.getIntExtra(EXTRA_PLAYBACK_STATE_CHANGE, 1)) {
 
                 // CASE: player is preparing stream
                 case PLAYBACK_LOADING_STATION:
                     if (mStationIDLast > -1 && mStationIDLast < mStationList.size()) {
                         mStationList.get(mStationIDLast).setPlaybackState(false);
+
                     }
                     mStationLoading = true;
                     mPlayback = true;
                     if (stationID > -1 && stationID < mStationList.size()) {
+
                         mStationList.get(stationID).setPlaybackState(true);
                     }
                     notifyDataSetChanged();
@@ -626,6 +631,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                 case PLAYBACK_STARTED:
                     mStationLoading = false;
                     if (stationID > -1 && stationID < mStationList.size()) {
+
                         mStationList.get(stationID).setPlaybackState(true);
                     }
                     notifyDataSetChanged();
@@ -640,11 +646,11 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                     notifyDataSetChanged();
                     break;
             }
-            Log.e("stationId",stationID+"");
-            Log.e("loading",mStationLoading+"");
-            Log.e("playback",mPlayback+"");
-            if(stationID>0&&stationID<mStationList.size())
-            Log.e("state", mStationList.get(stationID).getPlaybackState()+"");
+           /* Log.e("stationId", stationID + "");
+            Log.e("loading", mStationLoading + "");
+            Log.e("playback", mPlayback + "");
+            if (stationID > 0 && stationID < mStationList.size())
+                Log.e("state", mStationList.get(stationID).getPlaybackState() + "");*/
 
         }
 

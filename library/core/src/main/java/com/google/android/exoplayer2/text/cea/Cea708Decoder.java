@@ -233,7 +233,7 @@ public final class Cea708Decoder extends CeaDecoder {
         Assertions.checkArgument(ccType == DTVCC_PACKET_DATA);
 
         if (currentDtvCcPacket == null) {
-          Log.e(TAG, "Encountered DTVCC_PACKET_DATA before DTVCC_PACKET_START");
+          //TAG, "Encountered DTVCC_PACKET_DATA before DTVCC_PACKET_START");
           continue;
         }
 

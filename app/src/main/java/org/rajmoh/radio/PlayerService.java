@@ -302,8 +302,8 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // ACTION NEXT
         else if (intent.getAction().equals(ACTION_NEXT)) {
             LogHelper.e(LOG_TAG, "Service received command:NEXT");
-            Log.e("pos", mCurrentPosition + "");
-            Log.e("category,", mCategoryName);
+            //"pos", mCurrentPosition + "");
+            //"category,", mCategoryName);
             if (mStationList.size() > 1 && mCurrentPosition < mStationList.size() - 1) {
                 mCurrentPosition++;
 
@@ -370,7 +370,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-       Log.e("playbackstate",playbackState+"");
+       //"playbackstate",playbackState+"");
         switch (playbackState) {
             case STATE_BUFFERING:
                 // The player is not able to immediately play from the current position.
@@ -875,9 +875,9 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(PlayerService.this);
         File mFolder = storageHelper.getCollectionDirectory();
-        //  Log.e("playerfolder", categoryName);
+        //  //"playerfolder", categoryName);
         File mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + categoryName);
-        //Log.e("playerfolder2", mCategoryFolder.getName());
+        ////"playerfolder2", mCategoryFolder.getName());
         // create folder if necessary
         if (!mCategoryFolder.exists()) {
             LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
@@ -907,7 +907,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     Station newStation = new Station(file);
                     if (newStation.getStreamUri() != null) {
                         mStationList.add(newStation);
-                        Log.e("playerlength", mStationList.size() + "");
+                        //"playerlength", mStationList.size() + "");
 
                     }
                 }

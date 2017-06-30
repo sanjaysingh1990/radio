@@ -184,11 +184,11 @@ https://play.google.com/store/apps/details?id=org.rajmoh.radio</string>
     -->
 
 
-
     <string name="feedback_heading">Feedback</string>
     <string name="email_hint">your email</string>
     <string name="message_hint">your message</string>
     <string name="submit">Submit</string>
     <string name="feedback_response">Thank you for your feedback.</string>
     <string name="banner_ads_id">ca-app-pub-5996879671606073/1331895147</string>
+    <string name="double_back_press">Press again to exit!</string>
 </resources>

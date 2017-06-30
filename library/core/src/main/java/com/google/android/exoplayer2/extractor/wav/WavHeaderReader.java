@@ -62,7 +62,7 @@ import java.io.IOException;
     scratch.setPosition(0);
     int riffFormat = scratch.readInt();
     if (riffFormat != Util.getIntegerCodeForString("WAVE")) {
-      Log.e(TAG, "Unsupported RIFF format: " + riffFormat);
+      //TAG, "Unsupported RIFF format: " + riffFormat);
       return null;
     }
 
@@ -91,12 +91,12 @@ import java.io.IOException;
 
     @C.PcmEncoding int encoding = Util.getPcmEncoding(bitsPerSample);
     if (encoding == C.ENCODING_INVALID) {
-      Log.e(TAG, "Unsupported WAV bit depth: " + bitsPerSample);
+      //TAG, "Unsupported WAV bit depth: " + bitsPerSample);
       return null;
     }
 
     if (type != TYPE_PCM && type != TYPE_WAVE_FORMAT_EXTENSIBLE) {
-      Log.e(TAG, "Unsupported WAV format type: " + type);
+      //TAG, "Unsupported WAV format type: " + type);
       return null;
     }
 

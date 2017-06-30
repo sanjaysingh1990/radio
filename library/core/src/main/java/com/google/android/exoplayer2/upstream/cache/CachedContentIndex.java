@@ -269,7 +269,7 @@ import javax.crypto.spec.SecretKeySpec;
     } catch (FileNotFoundException e) {
       return false;
     } catch (IOException e) {
-      Log.e(TAG, "Error reading cache content index file.", e);
+      //TAG, "Error reading cache content index file.", e);
       return false;
     } finally {
       if (input != null) {

@@ -24,6 +24,7 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,7 +32,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -87,6 +87,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     private String mDirectoryName;
     private AdView adView;
     private String mPreviousCategory = "hindi";
+    boolean mDoubleBackToExitPressedOnce = false;
 
 
     @Override
@@ -114,9 +115,12 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(this);
         mFolder = storageHelper.getCollectionDirectory();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String lastCategory = settings.getString(PREF_LAST_CATEGORY_SELECTED, "Hindi");
 
         //default for hindi
-        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/Hindi");
+        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + lastCategory);
+        mPreviousCategory = lastCategory;
         if (!mCategoryFolder.exists())
             mCategoryFolder.mkdirs();
 
@@ -177,7 +181,8 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         binding.leftDrawerContent.recyclerviewLeftdrawer.setAdapter(mAdapter);
         binding.rightDrawerContent.recyclerviewRightdrawer.setAdapter(mChannelsAdapter);
         loadFromServer();
-        loadChannels("hindi");
+
+        loadChannels(lastCategory);
 
         //load banner ad
         adView = (AdView) findViewById(R.id.adView);
@@ -186,7 +191,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("abc")
                 .build();
-        adView.loadAd(adRequest);
+        //  adView.loadAd(adRequest);
 
 
         setSupportActionBar(binding.mainContent.toolbar);
@@ -330,6 +335,13 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
             Intent intent = new Intent(this, PlayerService.class);
             intent.setAction(ACTION_STOP);
             startService(intent);
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PREF_LAST_CATEGORY_SELECTED, cateName);
+            editor.apply();
+            LogHelper.v(LOG_TAG, "Saving state (" + cateName);
+
+
         }
         mPreviousCategory = cateName;
 
@@ -354,7 +366,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         CategoryModel item = noteDataSnapshot.getValue(CategoryModel.class);
 
-                        // Log.e("data",item.getCate_name());
+                        // //"data",item.getCate_name());
                         mCategoryList.add(item);
                         //save to favorite to database
                      /*   Realm myRealm = Util.getInstance().getRelam(FavoriteActivity.this);
@@ -382,7 +394,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.GONE);
-                    //Log.e("error", databaseError.getMessage());
+                    ////"error", databaseError.getMessage());
                     Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
                         public void retry() {
@@ -418,7 +430,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
             {
                 favoritebranch="UserFavoritesMysetriousWorld";
             }*/
-            // Log.e("cn",categoryName);
+            // //"cn",categoryName);
             Util.getInstance().getDatabaseReference().child(categoryName.toLowerCase()).child("channel").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -426,7 +438,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         ChannelInfo item = noteDataSnapshot.getValue(ChannelInfo.class);
-                        //  Log.e("data",item.getChannel_name());
+                        //  //"data",item.getChannel_name());
                         mChannelList.add(item);
                         //save to favorite to database
                      /*   Realm myRealm = Util.getInstance().getRelam(FavoriteActivity.this);
@@ -451,7 +463,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    //Log.e("error", databaseError.getMessage());
+                    ////"error", databaseError.getMessage());
                     Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
                         public void retry() {
@@ -503,7 +515,6 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         binding.drawer.openDrawer(GravityCompat.END);
 
 
-
     }
 
     @Override
@@ -517,5 +528,26 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDoubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.mDoubleBackToExitPressedOnce = true;
+        Util.getInstance().showToast(this,getResources().getString(R.string.double_back_press));
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mDoubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+
+
     }
 }

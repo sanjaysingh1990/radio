@@ -527,7 +527,7 @@ public class DefaultDrmSessionManager<T extends ExoMediaCrypto> implements DrmSe
       mediaDrm.restoreKeys(sessionId, offlineLicenseKeySetId);
       return true;
     } catch (Exception e) {
-      Log.e(TAG, "Error trying to restore Widevine keys.", e);
+      //TAG, "Error trying to restore Widevine keys.", e);
       onError(e);
     }
     return false;

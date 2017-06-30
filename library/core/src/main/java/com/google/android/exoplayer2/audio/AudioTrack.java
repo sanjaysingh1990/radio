@@ -788,8 +788,8 @@ public final class AudioTrack {
             + framesToDurationUs(getSubmittedFrames());
         if (startMediaTimeState == START_IN_SYNC
             && Math.abs(expectedPresentationTimeUs - presentationTimeUs) > 200000) {
-          Log.e(TAG, "Discontinuity detected [expected " + expectedPresentationTimeUs + ", got "
-              + presentationTimeUs + "]");
+          //TAG, "Discontinuity detected [expected " + expectedPresentationTimeUs + ", got "
+            //  + presentationTimeUs + "]");
           startMediaTimeState = START_NEED_SYNC;
         }
         if (startMediaTimeState == START_NEED_SYNC) {

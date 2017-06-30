@@ -114,8 +114,8 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
             mDuration.durationSelected(daysBetween(datetime,cal));
         //tv.setText("Your chosen time is...\n\n");
         //Display the user changed time on TextView
-        Log.e("date", String.valueOf(currentHour)
-                + " : " + String.valueOf(minute) + " " + aMpM + "\n");
+        //"date", String.valueOf(currentHour)
+              //  + " : " + String.valueOf(minute) + " " + aMpM + "\n");
 
     }
 

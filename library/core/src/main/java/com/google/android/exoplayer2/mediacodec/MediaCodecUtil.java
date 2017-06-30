@@ -95,7 +95,7 @@ public final class MediaCodecUtil {
       getDecoderInfos(mimeType, secure);
     } catch (DecoderQueryException e) {
       // Codec warming is best effort, so we can swallow the exception.
-      Log.e(TAG, "Codec warming failed", e);
+      //TAG, "Codec warming failed", e);
     }
   }
 
@@ -191,11 +191,11 @@ public final class MediaCodecUtil {
               } catch (Exception e) {
                 if (Util.SDK_INT <= 23 && !decoderInfos.isEmpty()) {
                   // Suppress error querying secondary codec capabilities up to API level 23.
-                  Log.e(TAG, "Skipping codec " + codecName + " (failed to query capabilities)");
+                  //TAG, "Skipping codec " + codecName + " (failed to query capabilities)");
                 } else {
                   // Rethrow error querying primary codec capabilities, or secondary codec
                   // capabilities if API level is greater than 23.
-                  Log.e(TAG, "Failed to query codec " + codecName + " (" + supportedType + ")");
+                  //TAG, "Failed to query codec " + codecName + " (" + supportedType + ")");
                   throw e;
                 }
               }

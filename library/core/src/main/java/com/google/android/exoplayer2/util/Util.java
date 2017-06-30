@@ -1077,7 +1077,7 @@ public final class Util {
           Method getMethod = systemProperties.getMethod("get", String.class);
           sysDisplaySize = (String) getMethod.invoke(systemProperties, "sys.display-size");
         } catch (Exception e) {
-          Log.e(TAG, "Failed to read sys.display-size", e);
+          //TAG, "Failed to read sys.display-size", e);
         }
         // If we managed to read sys.display-size, attempt to parse it.
         if (!TextUtils.isEmpty(sysDisplaySize)) {
@@ -1093,7 +1093,7 @@ public final class Util {
           } catch (NumberFormatException e) {
             // Do nothing.
           }
-          Log.e(TAG, "Invalid sys.display-size: " + sysDisplaySize);
+          //TAG, "Invalid sys.display-size: " + sysDisplaySize);
         }
       }
     }

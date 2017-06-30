@@ -82,7 +82,7 @@ public final class StationContextMenu extends DialogFragment implements Transist
 
     /* Displays context menu */
     public void show(final boolean isFavorite) {
-        Log.e("curpath", mCurrentFolder + "'");
+        //"curpath", mCurrentFolder + "'");
 
         PopupMenu popup = new PopupMenu(mActivity, mView);
         if (isFavorite)
@@ -137,12 +137,12 @@ public final class StationContextMenu extends DialogFragment implements Transist
 
                         File destinationFile = new File(mCollectionFolder.getAbsolutePath() + "/favorites/" + mStation.getStationName() + ".m3u");
 
-                        Log.e("sourcefile", sourceFile.getAbsolutePath());
-                        Log.e("destinationfile", destinationFile.getAbsolutePath());
+                        //"sourcefile", sourceFile.getAbsolutePath());
+                        //"destinationfile", destinationFile.getAbsolutePath());
                         try {
                             copy(sourceFile, destinationFile);
                         } catch (IOException ex) {
-                            Log.e("ioexception", ex.getLocalizedMessage() + "");
+                            //"ioexception", ex.getLocalizedMessage() + "");
                         }
                         return true;
 

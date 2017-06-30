@@ -145,8 +145,8 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
             mActivity.finish();
         }
         //  mFolderSize = mFolder.listFiles().length;
-        // Log.e("location",mFolder.getAbsolutePath());
-        //Log.e("len",mFolderSize+"");
+        // //"location",mFolder.getAbsolutePath());
+        ////"len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
             mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, false, this);
@@ -419,7 +419,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
 
     /* Handles tap timer icon in actionbar */
     private void handleMenuSleepTimerClick(long duration) {
-        Log.e("duration", duration + "");
+        //"duration", duration + "");
         // load app state
         loadAppState(mActivity);
 
@@ -535,7 +535,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
 
     /* Saves app state to SharedPreferences */
     private void saveAppState(Context context) {
-        Log.e("favfrag","app state saved");
+        //"favfrag","app state saved");
        // SharedPreferences settings = getActivity().getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
           SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = settings.edit();
@@ -564,7 +564,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-                    Log.e("receiverfav", "playback");
+                    //"receiverfav", "playback");
                     handlePlaybackStateChanges(intent);
                 }
             }

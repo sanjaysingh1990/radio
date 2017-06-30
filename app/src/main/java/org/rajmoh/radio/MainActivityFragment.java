@@ -150,14 +150,17 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(mActivity);
-        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/Hindi");
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        String lastCategory=settings.getString(PREF_LAST_CATEGORY_SELECTED,"Hindi");
+        Log.e("lastselectedcategory",lastCategory);
+        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/"+lastCategory);
         if (mFolder == null) {
             Toast.makeText(mActivity, mActivity.getString(R.string.toastalert_no_external_storage), Toast.LENGTH_LONG).show();
             mActivity.finish();
         }
         //  mFolderSize = mFolder.listFiles().length;
-        // Log.e("location",mFolder.getAbsolutePath());
-        //Log.e("len",mFolderSize+"");
+        // //"location",mFolder.getAbsolutePath());
+        ////"len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
             mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true, this);
@@ -493,7 +496,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     /* Handles tap timer icon in actionbar */
     private void handleMenuSleepTimerClick(long duration) {
-        Log.e("duration", duration + "");
+        //"duration", duration + "");
         // load app state
         loadAppState(mActivity);
 
@@ -750,6 +753,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
                     mCollectionAdapter.notifyDataSetChanged(); // TODO Remove?
                     channelsLoaded(mCollectionAdapter.getItemCount());
+                    Log.e("mstationIdLast",mStationIDLast+"");
                 }
                 break;
 
@@ -779,7 +783,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
             // CASE: station was deleted
             case STATION_DELETED:
-                Log.e("collection", "changed");
+                //"collection", "changed");
 
                 if (intent.hasExtra(EXTRA_STATION) && intent.hasExtra(EXTRA_STATION_ID)) {
 

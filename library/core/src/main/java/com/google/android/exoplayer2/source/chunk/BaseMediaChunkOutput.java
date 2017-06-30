@@ -48,7 +48,7 @@ import com.google.android.exoplayer2.source.chunk.ChunkExtractorWrapper.TrackOut
         return trackOutputs[i];
       }
     }
-    Log.e(TAG, "Unmatched track of type: " + type);
+    //TAG, "Unmatched track of type: " + type);
     return new DummyTrackOutput();
   }
 
