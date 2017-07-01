@@ -253,7 +253,7 @@ import java.util.Arrays;
           }
           break;
         default:
-          Log.e(TAG, "mapping type other than 0 not supported: " + mappingType);
+          //TAG, "mapping type other than 0 not supported: " + mappingType);
       }
     }
   }

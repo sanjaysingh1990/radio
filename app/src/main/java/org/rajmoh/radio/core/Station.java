@@ -105,8 +105,8 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
 
     /* Constructor when given folder and remote location */
     public Station(File folder, URL fileLocation,String stationName) {
-        Log.e("channelname",stationName+"");
-        Log.e("foldername",folder.getName()+"");
+        //"channelname",stationName+"");
+        //"foldername",folder.getName()+"");
 
         // create results bundle
         mStationFetchResults = new Bundle();
@@ -522,7 +522,7 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
     public void writePlaylistFile(File folder) {
 
         setStationPlaylistFile(folder);
-        Log.e("foldersaving",folder.getName());
+        //"foldersaving",folder.getName());
         if (mStationPlaylistFile.exists()) {
             LogHelper.e(LOG_TAG, "File exists. Overwriting " + mStationPlaylistFile.getName() + " " + mStationName + " " + mStreamUri);
         }
@@ -627,7 +627,7 @@ public final class Station implements TransistorKeys, Comparable<Station>, Parce
             String stationNameCleaned = mStationName.replaceAll("[:/]", "_");
             // construct location of m3u playlist file from station name and folder
             String fileLocation = folder.toString() + "/" + stationNameCleaned + ".m3u";
-            Log.e("filelocation",fileLocation);
+            //"filelocation",fileLocation);
             mStationPlaylistFile = new File(fileLocation);
         }
     }

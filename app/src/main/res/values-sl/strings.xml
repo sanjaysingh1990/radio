@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <!-- activities -->
-    <string name="app_name">Transistor</string> <!-- please do not translate app_name - transcription into different alphabet types is fine though -->
+    <string name="app_name">Air Voice</string> <!-- please do not translate app_name - transcription into different alphabet types is fine though -->
     <string name="title_activity_player">Zdaj se predvaja</string>
     <string name="title_activity_infosheet">Podrobnosti</string>
 
@@ -71,15 +71,15 @@
     <string name="dialog_error_title_fetch_read">Read Issue</string>
     <string name="dialog_error_title_fetch_write">Write Issue</string>
     <string name="dialog_error_message_fetch_general_external_storage">Zunanja shramba:</string>
-    <string name="dialog_error_message_fetch_general_hint_m3u">Namig: aplikacija Transistor lahko obdela le medijske tokove kodirane v formatu MP3 ali OGG, oziroma medijske povezave s končnicami .m3u ali .pls.</string>
+    <string name="dialog_error_message_fetch_general_hint_m3u">Namig: aplikacija Air Voice lahko obdela le medijske tokove kodirane v formatu MP3 ali OGG, oziroma medijske povezave s končnicami .m3u ali .pls.</string>
     <string name="dialog_error_message_fetch_general_playlist_type">MIME type of file:</string>
     <string name="dialog_error_message_fetch_general_stream_type">MIME type of stream:</string>
     <string name="dialog_error_message_fetch_general_file_content">Vsebina oddaljene datoteke:</string>
-    <string name="dialog_error_message_fetch_download">Aplikacji Transistor ni uspelo pridobiti ustreznih podatkov iz vnešene povezave.</string>
+    <string name="dialog_error_message_fetch_download">Aplikacji Air Voice ni uspelo pridobiti ustreznih podatkov iz vnešene povezave.</string>
     <string name="dialog_error_message_fetch_download_station_url">URL postaje:</string>
-    <string name="dialog_error_message_fetch_read">Transistor tried hard but could not make sense of given file.</string>
+    <string name="dialog_error_message_fetch_read">Air Voice tried hard but could not make sense of given file.</string>
     <string name="dialog_error_message_fetch_read_file_location">Location of file:</string>
-    <string name="dialog_error_message_fetch_write">Transistor tried hard but could not save given station to storage.</string>
+    <string name="dialog_error_message_fetch_write">Air Voice tried hard but could not save given station to storage.</string>
 
     <!-- messages -->
     <string name="actioncall_message_start_here">Dodaj novo postajo</string>
@@ -102,8 +102,8 @@
     <string name="toastalert_headphones_unplugged">Prenos je bil ustavljen zaradi odstranitve slušalk.</string>
     <string name="toastalert_permission_denied">Permission denied:</string>
     <string name="toastalert_station_not_found">Unable to find station.</string>
-    <string name="toastalert_stream_not_found">Transistor does not recognize this station. Please delete and add it again to the Home screen.</string>
-    <string name="snackbar_request_storage_access">Za dodajanje nove ikone radijski postaji potrebuje Transistor dostop do vaših slik in fotografij.</string>
+    <string name="toastalert_stream_not_found">Air Voice does not recognize this station. Please delete and add it again to the Home screen.</string>
+    <string name="snackbar_request_storage_access">Za dodajanje nove ikone radijski postaji potrebuje Air Voice dostop do vaših slik in fotografij.</string>
     <string name="snackbar_message_timer_set">Sleep timer set to</string>
 
     <!-- notification -->
@@ -113,55 +113,55 @@
     <string name="notification_playing">Predvaja se:</string>
 
     <!-- infosheet about -->
-    <string name="infosheet_about_h1_about">About Transistor</string>
+    <string name="infosheet_about_h1_about">About Air Voice</string>
     <string name="infosheet_about_h2_radio">Radio app for Android</string>
     <string name="infosheet_about_h3_version">Version 2.2 (Sons Of The Silent Age)</string>
-    <string name="infosheet_about_p_bare">Transistor is a bare bones app for listening to radio programs over the internet. The app stores stations as files on your device\'s external storage. Look for files of type m3u within /Android/data/org.y20k.transistor/files/Collection. It currently understands streams encoded in MP3 and OGG.</string>
+    <string name="infosheet_about_p_bare">Air Voice is a bare bones app for listening to radio programs over the internet. The app stores stations as files on your device\'s external storage. Look for files of type m3u within /Android/data/org.y20k.Air Voice/files/Collection. It currently understands streams encoded in MP3 and OGG.</string>
     <string name="infosheet_about_p_note">Important note: This is an app of type BYOS (&quot;bring your own station&quot;). It does not feature any kind of built-in search option. You will have to manually add radio stations.</string>
-    <string name="infosheet_about_p_free">Transistor is free software. It is published under the MIT open source license. You can find the code on GitHub. GitHub is also a good place to file bugs or even to contribute, if you are interested.</string>
-    <string name="infosheet_about_p_github">https://github.com/y20k/transistor</string>
+    <string name="infosheet_about_p_free">Air Voice is free software. It is published under the MIT open source license. You can find the code on GitHub. GitHub is also a good place to file bugs or even to contribute, if you are interested.</string>
+    <string name="infosheet_about_p_github">https://github.com/y20k/Air Voice</string>
     <string name="infosheet_about_p_license">https://opensource.org/licenses/MIT</string>
-    <string name="infosheet_about_h2_permissions">Which Permissions does Transistor need?</string>
+    <string name="infosheet_about_h2_permissions">Which Permissions does Air Voice need?</string>
     <string name="infosheet_about_h3_shortcut">Permission INSTALL_SHORTCUT and UNINSTALL_SHORTCUT</string>
     <string name="infosheet_about_p_shortcut">This permission is needed to install and uninstall radio station shortcuts on the Android Home screen.</string>
     <string name="infosheet_about_h3_internet">Permission INTERNET</string>
-    <string name="infosheet_about_p_internet">Transistor streams radio stations over the internet.</string>
+    <string name="infosheet_about_p_internet">Air Voice streams radio stations over the internet.</string>
     <string name="infosheet_about_h3_external">Permission READ_EXTERNAL_STORAGE</string>
-    <string name="infosheet_about_p_external">Transistor needs access to images, photos and documents to be able customize radio station icons and to able to open locally saved playlist files.</string>
+    <string name="infosheet_about_p_external">Air Voice needs access to images, photos and documents to be able customize radio station icons and to able to open locally saved playlist files.</string>
     <string name="infosheet_about_h3_vibrate">Permission VIBRATE</string>
     <string name="infosheet_about_p_vibrate">Tapping and holding a radio station will toggle a tiny vibration.</string>
     <string name="infosheet_about_h3_wakelock">Permission WAKE_LOCK</string>
-    <string name="infosheet_about_p_wakelock">During Playback Transistor acquires a so called partial wake lock. That prevents the Android system to stop playback for power saving reasons.</string>
+    <string name="infosheet_about_p_wakelock">During Playback Air Voice acquires a so called partial wake lock. That prevents the Android system to stop playback for power saving reasons.</string>
 
     <!-- infosheet howto -->
-    <string name="infosheet_howto_h1_howto">How to use Transistor</string>
+    <string name="infosheet_howto_h1_howto">How to use Air Voice</string>
     <string name="infosheet_howto_h2_add">How to add a new radio station?</string>
-    <string name="infosheet_howto_p_add">The easiest way to add a new station is to search the web for streaming links and then choose Transistor as a your default handler for those file types. You can also tap the (+) symbol in the top bar and paste in streaming links directly. Please note: Transistor does not feature any kind of built-in search option.</string>
+    <string name="infosheet_howto_p_add">The easiest way to add a new station is to search the web for streaming links and then choose Air Voice as a your default handler for those file types. You can also tap the (+) symbol in the top bar and paste in streaming links directly. Please note: Air Voice does not feature any kind of built-in search option.</string>
     <string name="infosheet_howto_h2_play">How to play back a radio station?</string>
     <string name="infosheet_howto_p_play">Tap the big Play button ;).</string>
     <string name="infosheet_howto_h2_stop">How to stop playback?</string>
     <string name="infosheet_howto_p_stop">Tap the big Stop button or unplug your headphones or swipe off the notification from the lockscreen.</string>
     <string name="infosheet_howto_h2_sleep">How to start the sleep timer?</string>
-    <string name="infosheet_howto_p_sleep">Tapping the Clock symbol starts a 15 minute countdown after which Transistor stops playback. An additional tap adds 15 minutes to the clock. Playback must be running to be able to activate the sleep timer.</string>
+    <string name="infosheet_howto_p_sleep">Tapping the Clock symbol starts a 15 minute countdown after which Air Voice stops playback. An additional tap adds 15 minutes to the clock. Playback must be running to be able to activate the sleep timer.</string>
     <string name="infosheet_howto_h2_shortcut">How to place a station shortcut on the Home screen?</string>
-    <string name="infosheet_howto_p_shortcut">The option to place a shortcut for a station on the Home screen can be accessed from the station\'s three dots menu. A tap on a shortcut will open Transistor - playback will start immediately.</string>
+    <string name="infosheet_howto_p_shortcut">The option to place a shortcut for a station on the Home screen can be accessed from the station\'s three dots menu. A tap on a shortcut will open Air Voice - playback will start immediately.</string>
     <string name="infosheet_howto_h2_edit">How to rename or delete a station?</string>
     <string name="infosheet_howto_p_edit">The rename and delete options can be accessed both from the station\'s context menu. Just tap on the three dots symbol. You can manage the list of stations also from a file browser (see next question).</string>
-    <string name="infosheet_howto_h2_storage">Where does Transistor store its stations?</string>
-    <string name="infosheet_howto_p_storage">Transistor does not save its list of stations in a database. Instead it stores stations as m3u files on your device\'s external storage. Feel free to tinker with those files using the texteditor of your choice. The files are stored in /Android/data/org.y20k.transistor/files/Collection.</string>
+    <string name="infosheet_howto_h2_storage">Where does Air Voice store its stations?</string>
+    <string name="infosheet_howto_p_storage">Air Voice does not save its list of stations in a database. Instead it stores stations as m3u files on your device\'s external storage. Feel free to tinker with those files using the texteditor of your choice. The files are stored in /Android/data/org.y20k.Air Voice/files/Collection.</string>
     <string name="infosheet_howto_h2_backup">How do I backup and transfer my radio stations?</string>
-    <string name="infosheet_howto_p_backup">Transistor supports Android 6\'s Auto Backup feature. Radio stations are always backed up to your Google account and will be restored at reinstall. On devices running on older versions of Android you must manually save and restore the &quot;Collection&quot; folder.</string>
-    <string name="infosheet_howto_h2_settings">Why does Transistor not have any setting?</string>
-    <string name="infosheet_howto_p_settings">There is nothing to be set ;). Transistor is a very simple app. Depending on your point of view &quot;simple&quot; is either great or lame.</string>
+    <string name="infosheet_howto_p_backup">Air Voice supports Android 6\'s Auto Backup feature. Radio stations are always backed up to your Google account and will be restored at reinstall. On devices running on older versions of Android you must manually save and restore the &quot;Collection&quot; folder.</string>
+    <string name="infosheet_howto_h2_settings">Why does Air Voice not have any setting?</string>
+    <string name="infosheet_howto_p_settings">There is nothing to be set ;). Air Voice is a very simple app. Depending on your point of view &quot;simple&quot; is either great or lame.</string>
 
     <!-- 
     +++ IMPORTANT NOTE +++
     The HTML strings previously found here were replaced by multiple non-HTML strings 
     (infosheet_about_... & infosheet_howto_...). This should make translations easier - 
-    see GitHub issue #69 (https://github.com/y20k/transistor/issues/69). If you are 
+    see GitHub issue #69 (https://github.com/y20k/Air Voice/issues/69). If you are 
     looking for the old HTML strings. They still can be found here in their respective 
     "values" folders:
-    https://github.com/y20k/transistor/tree/1e51dd8666194353427ca074f2092b6c20cfacd6/app/src/main/res 
+    https://github.com/y20k/Air Voice/tree/1e51dd8666194353427ca074f2092b6c20cfacd6/app/src/main/res 
     -->
 
 </resources>

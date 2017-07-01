@@ -505,7 +505,7 @@ public class DefaultHttpDataSource implements HttpDataSource {
       try {
         contentLength = Long.parseLong(contentLengthHeader);
       } catch (NumberFormatException e) {
-        Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
+        //TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
       }
     }
     String contentRangeHeader = connection.getHeaderField("Content-Range");
@@ -529,7 +529,7 @@ public class DefaultHttpDataSource implements HttpDataSource {
             contentLength = Math.max(contentLength, contentLengthFromRange);
           }
         } catch (NumberFormatException e) {
-          Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
+          //TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
         }
       }
     }
@@ -669,7 +669,7 @@ public class DefaultHttpDataSource implements HttpDataSource {
       try {
         connection.disconnect();
       } catch (Exception e) {
-        Log.e(TAG, "Unexpected error while disconnecting", e);
+        //TAG, "Unexpected error while disconnecting", e);
       }
       connection = null;
     }

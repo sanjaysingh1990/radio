@@ -71,7 +71,7 @@ public class FeedBackActivity extends AppCompatActivity {
              feedbackModel.setTime(Util.getInstance().getCurrentTime());
              feedbackModel.setEmail(activityFeedBackBinding.edittextEmail.getText().toString());
              feedbackModel.setMessage(activityFeedBackBinding.editTextMessage.getText().toString());
-           //  Log.e("Android","Android ID : "+android_id);
+           //  //"Android","Android ID : "+android_id);
              String feedbackbranch="feedback";
              if(getApplicationContext().getPackageName().compareToIgnoreCase("com.rajmoh.mysteriousworld")==0)
              {
@@ -88,7 +88,7 @@ public class FeedBackActivity extends AppCompatActivity {
                  @Override
                  public void onFailure(@NonNull Exception e) {
                      activityFeedBackBinding.progressBar2.setVisibility(View.GONE);
-                    // Log.e("error",e.getMessage()+"");
+                    // //"error",e.getMessage()+"");
                  }
              }).addOnSuccessListener(FeedBackActivity.this, new OnSuccessListener<Void>() {
                  @Override
@@ -110,7 +110,7 @@ public class FeedBackActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-    initializeBannerAds();
+    //initializeBannerAds();
     }
 
     private boolean validate()
@@ -154,17 +154,17 @@ private void initializeBannerAds()
     activityFeedBackBinding.adView.setAdListener(new AdListener() {
         @Override
         public void onAdFailedToLoad(int i) {
-            Log.e("adderror",i+"");
+            //"adderror",i+"");
         }
 
         @Override
         public void onAdOpened() {
-            Log.e("add","opened");
+            //"add","opened");
         }
 
         @Override
         public void onAdLoaded() {
-            Log.e("add","loaded");
+            //"add","loaded");
         }
     });
 }

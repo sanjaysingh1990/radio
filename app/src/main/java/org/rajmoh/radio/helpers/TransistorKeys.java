@@ -68,6 +68,7 @@ public interface TransistorKeys {
     String PREF_PLAYBACK = "prefPlayback";
     String PREF_STATION_LOADING = "prefStationLoading";
     String PREF_STATION_ID_CURRENTLY_PLAYING = "prefStationIDCurrentlyPlaying";
+    String PREF_LAST_CATEGORY_SELECTED = "lastcategoryselected";
     String PREF_STATION_ID_LAST = "prefStationIDLast";
     String PREF_STATION_ID_SELECTED = "prefStationIDSelected";
     String PREF_STATION_METADATA = "prefStationMetadata";

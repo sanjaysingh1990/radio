@@ -37,7 +37,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -165,7 +164,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             if (arguments.containsKey(ARG_STATION)) {
                 mStation = arguments.getParcelable(ARG_STATION);
                 arguments.remove(ARG_STATION);
-                Log.e("plpbs",mStation.getPlaybackState()+"");
+                //"plpbs", mStation.getPlaybackState() + "");
             }
 
             // get station ID from arguments
@@ -202,9 +201,9 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             }
 
             if (arguments.containsKey(IS_FAVORITE)) {
-                mIsFavorite = arguments.getBoolean(IS_FAVORITE,false);
+                mIsFavorite = arguments.getBoolean(IS_FAVORITE, false);
             } else {
-                mIsFavorite=false;
+                mIsFavorite = false;
 
             }
 
@@ -369,16 +368,16 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("abc")
                 .build();
-        adView.loadAd(adRequest);
+        //    adView.loadAd(adRequest);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(int i) {
-                Log.e("error", i + "");
+                //"error", i + "");
             }
 
             @Override
             public void onAdLoaded() {
-                Log.e("error", "loaded");
+                //"error", "loaded");
             }
         });
 
@@ -387,6 +386,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             @Override
             public void onClick(View view) {
                 if (mStationList.size() > 1 && mPosition < mStationList.size() - 1) {
+
                     mPosition++;
                     mImgPreviousChannel.setVisibility(View.VISIBLE);
                     setupNextChannel();
@@ -402,6 +402,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             @Override
             public void onClick(View view) {
                 if (mStationList.size() > 0 && mPosition > 0) {
+
                     mPosition--;
                     mImgNextChannel.setVisibility(View.VISIBLE);
                     setupNextChannel();
@@ -420,6 +421,19 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
     }
 
     private void setupNextChannel() {
+
+
+        // set fragment visibility
+        mVisibility = false;
+
+        // set loading status
+        mStationLoading = false;
+
+
+        // load playback state from preferences
+        loadAppState(mActivity);
+
+
         // get station from arguments
         Station station = mStationList.get(mPosition);
         mStation = station;
@@ -462,7 +476,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
 
         } catch (Exception e) {
-            Log.e("voleror", e.getMessage() + "");
+            //"voleror", e.getMessage() + "");
         }
     }
 
@@ -627,7 +641,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         intent.putExtra(EXTRA_STATION, mStation);
         intent.putExtra(EXTRA_STATION_ID, mStationID);
         intent.putExtra(CATEGORY_NAME, mCategoryName);
-        intent.putExtra(IS_FAVORITE,mIsFavorite);
+        intent.putExtra(IS_FAVORITE, mIsFavorite);
         mActivity.startService(intent);
         LogHelper.v(LOG_TAG, "Starting player service.");
 
@@ -867,7 +881,14 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
     /* Loads app state from preferences */
     private void loadAppState(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        // SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences settings;
+       /* if (mIsFavorite)
+            settings = mActivity.getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
+        else*/
+
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
+
         mStationIDCurrent = settings.getInt(PREF_STATION_ID_CURRENTLY_PLAYING, -1);
         mStationIDLast = settings.getInt(PREF_STATION_ID_LAST, -1);
         mStationID = settings.getInt(PREF_STATION_ID_SELECTED, 0);
@@ -946,7 +967,12 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
                 }
             }
         };
-        IntentFilter playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
+        IntentFilter playbackStateChangedIntentFilter;
+        if (mIsFavorite)
+            playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
+        else
+            playbackStateChangedIntentFilter = new IntentFilter(ACTION_PLAYBACK_STATE_CHANGED);
+
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(mPlaybackStateChangedReceiver, playbackStateChangedIntentFilter);
 
         // RECEIVER: station added, deleted, or changed
@@ -954,7 +980,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-                     handleCollectionChanges(intent);
+                    handleCollectionChanges(intent);
                 }
             }
         };
@@ -992,7 +1018,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         // get station from intent
         Station station = intent.getParcelableExtra(EXTRA_STATION);
-
+        //"curstate", intent.getIntExtra(EXTRA_PLAYBACK_STATE_CHANGE, 1) + "");
         switch (intent.getIntExtra(EXTRA_PLAYBACK_STATE_CHANGE, 1)) {
 
             // CASE: player is preparing stream
@@ -1148,7 +1174,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                Log.e("adderror", errorCode + "");
+                //"adderror", errorCode + "");
             }
 
             @Override
@@ -1157,7 +1183,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
             @Override
             public void onAdOpened() {
-                Log.e("addopened", "opened");
+                //"addopened", "opened");
             }
         });
     }
@@ -1167,9 +1193,9 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(getActivity());
         File mFolder = storageHelper.getCollectionDirectory();
-        Log.e("playerfolder", categoryName);
+        //"playerfolder", categoryName);
         File mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + categoryName);
-        //Log.e("playerfolder2", mCategoryFolder.getName());
+        ////"playerfolder2", mCategoryFolder.getName());
         // create folder if necessary
         if (!mCategoryFolder.exists()) {
             // LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
@@ -1239,7 +1265,6 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         }
 
     }
-
 
 
 }

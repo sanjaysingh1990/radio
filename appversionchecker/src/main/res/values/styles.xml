@@ -1,0 +1,375 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+
+
+
+
+
+    -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+
+
+
+
+
+        -->
+    </style>
+
+    <style name="mytheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+
+
+
+
+
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="editBox">
+        <item name="android:textColor">@color/trans_black</item>
+        <item name="android:textColorHint">@color/trans_black</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="editBoxBlack">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray500</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="editBoxBlackCenter">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray500</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:gravity">center|left</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="textLogin">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/hint_color</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textSize">@dimen/very_small_size</item>
+    </style>
+
+    <style name="buttonLogin">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/button_shape</item>
+    </style>
+
+    <style name="buttonBlueShape">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/button_shape_blue</item>
+    </style>
+
+    <style name="button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@color/button_blue</item>
+    </style>
+
+    <style name="buttonRoundCorner">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/sqaurebox_button</item>
+    </style>
+
+    <style name="buttonForgot">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@color/gray</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+    </style>
+
+    <style name="textviewBig">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="textviewSmall">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/small_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="textviewSmallBlack">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/small_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="textviewBigLeft">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">left|center</item>
+    </style>
+
+    <style name="textviewBigHeaderLeft">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">left|center</item>
+    </style>
+
+    <style name="textviewBigHeaderCenter">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="textviewNormal">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">left|center</item>
+    </style>
+
+    <style name="dialog_animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <style name="dialog_animation_city">
+        <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <style name="textviewBigBlackLeft">
+
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center|left</item>
+    </style>
+
+    <style name="textviewNormalBlackLeft">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center|left</item>
+    </style>
+
+    <style name="textviewNormalnewLeft">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:textColor">@color/unselect_color</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="textviewNormalBoldBlackLeft">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/standard_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center|left</item>
+    </style>
+
+    <style name="textviewSmallBlackLeft">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/small_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center|left</item>
+    </style>
+
+    <style name="textviewSmallBoldBlackLeft">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/small_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center|left</item>
+    </style>
+
+    <style name="ZopimChatTheme" parent="ZopimChatTheme.Light">
+        <!-- Customize chat theme here. -->
+        <item name="colorAccent">@color/theme_color</item>
+        <item name="colorPrimary">@color/theme_color</item>
+        <item name="colorPrimaryDark">@color/theme_color</item>
+    </style>
+
+    <!--Customize toolbar that replaces action bar-->
+    <style name="zopim_toolbar" parent="_zopim_toolbar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <!--Customize not agents button-->
+    <style name="no_agents_button">
+        <item name="android:background">@color/theme_color</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!--Customize where chat widget appears-->
+    <style name="chat_widget" parent="_chat_widget">
+        <item name="anchor">bottom_left</item>
+    </style>
+
+    <!--Customize chat colors-->
+    <color name="chat_bubble_visitor">@color/theme_color</color>
+
+    <style name="rg_tab_bottom">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/orange_gray_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="main_tab_bottom">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/orange_gray_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/title_height</item>
+        <item name="android:background">@color/primary</item>
+    </style>
+    <style name="BaseTitleText.Orange">
+        <item name="android:textColor">@color/orange_color</item>
+    </style>
+    <style name="BaseTitleText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:textSize">@dimen/text_size_title</item>
+        <item name="android:textColor">@color/basic_text_color</item>
+    </style>
+    <style name="Btn_state">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/orange_blue_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingLeft">3dp</item>
+        <item name="android:paddingRight">3dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">16dp</item>
+
+    </style>
+
+
+    <style name="BaseLine">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/stroke_gray_color</item>
+    </style>
+
+    <style name="BaseLine.Vertical">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="BaseIcon">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="RoundIcon" parent="BaseIcon">
+        <item name="android:background">@drawable/image_round_bg</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+
+
+    <style name="BaseIcon.Thin">
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+    </style>
+
+    <style name="SmallIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="BaseButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">32dp</item>
+        <item name="android:layout_marginRight">32dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/orange_blue_selector</item>
+        <item name="android:textColor">@color/basic_text_color</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
+    </style>
+
+    <style name="CustomProcessDialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:windowFrame">@android:color/transparent</item>
+        <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 模糊 -->
+    </style>
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:background">@color/primary</item>
+    </style>
+</resources>

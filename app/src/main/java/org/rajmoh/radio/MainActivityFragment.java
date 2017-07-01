@@ -25,9 +25,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -43,11 +41,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.rajmoh.radio.callbacks.ChannelsLoadedCallBack;
 import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.ImageHelper;
 import org.rajmoh.radio.helpers.LogHelper;
@@ -70,7 +72,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * MainActivityFragment class
  */
-public final class MainActivityFragment extends Fragment implements TransistorKeys {
+public final class MainActivityFragment extends Fragment implements TransistorKeys, ChannelsLoadedCallBack {
 
     /* Define log tag */
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
@@ -103,6 +105,10 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
     private SleepTimerService mSleepTimerService;
     private String mSleepTimerNotificationMessage;
     private Snackbar mSleepTimerNotification;
+    private LinearLayout mLinerLayoutEmpty;
+    private ImageView mImgEmpty;
+    private TextView mTxtEmpty;
+    private ImageView mImgAddChannel;
 
 
     /* Constructor (default) */
@@ -144,17 +150,20 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(mActivity);
-        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/Hindi");
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        String lastCategory=settings.getString(PREF_LAST_CATEGORY_SELECTED,"Hindi");
+        Log.e("lastselectedcategory",lastCategory);
+        mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/"+lastCategory);
         if (mFolder == null) {
             Toast.makeText(mActivity, mActivity.getString(R.string.toastalert_no_external_storage), Toast.LENGTH_LONG).show();
             mActivity.finish();
         }
         //  mFolderSize = mFolder.listFiles().length;
-        // Log.e("location",mFolder.getAbsolutePath());
-        //Log.e("len",mFolderSize+"");
+        // //"location",mFolder.getAbsolutePath());
+        ////"len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true, this);
         }
 
         // initialize broadcast receivers
@@ -197,14 +206,26 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
+        mLinerLayoutEmpty = (LinearLayout) mRootView.findViewById(R.id.layout_linear_empty);
+        mImgEmpty = (ImageView) mRootView.findViewById(R.id.image_empty);
+        mImgAddChannel = (ImageView) mRootView.findViewById(R.id.image_add_channel);
+        mTxtEmpty = (TextView) mRootView.findViewById(R.id.text_empty);
+        mImgEmpty.setImageResource(R.drawable.ic_radio_no_channel);
+        mTxtEmpty.setText(getResources().getString(R.string.no_channels));
 
         // attach adapter to list view
         mRecyclerView.setAdapter(mCollectionAdapter);
 
+        //add listener
+        mImgAddChannel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new Character('C'));// hide search progress if running
 
+            }
+        });
         return mRootView;
     }
-
 
 
     @Override
@@ -233,7 +254,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         int folderSize = mFolder.listFiles().length;
         if (mFolderSize != mFolder.listFiles().length) {
             mFolderSize = folderSize;
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true, this);
             mRecyclerView.setAdapter(mCollectionAdapter);
         }
 
@@ -475,7 +496,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     /* Handles tap timer icon in actionbar */
     private void handleMenuSleepTimerClick(long duration) {
-        Log.e("duration", duration + "");
+        //"duration", duration + "");
         // load app state
         loadAppState(mActivity);
 
@@ -617,8 +638,6 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-                    Log.e("receivermain", "playback");
-
                     handlePlaybackStateChanges(intent);
                 }
             }
@@ -631,7 +650,6 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null && intent.hasExtra(EXTRA_COLLECTION_CHANGE)) {
-                    Log.e("receivermain", "collection");
 
                     handleCollectionChanges(intent);
                 }
@@ -734,6 +752,8 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                     mCollectionAdapter.setStationIDSelected(newStationPosition, false, false);
 
                     mCollectionAdapter.notifyDataSetChanged(); // TODO Remove?
+                    channelsLoaded(mCollectionAdapter.getItemCount());
+                    Log.e("mstationIdLast",mStationIDLast+"");
                 }
                 break;
 
@@ -763,7 +783,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
             // CASE: station was deleted
             case STATION_DELETED:
-                Log.e("collection", "changed");
+                //"collection", "changed");
 
                 if (intent.hasExtra(EXTRA_STATION) && intent.hasExtra(EXTRA_STATION_ID)) {
 
@@ -793,6 +813,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                         mLayoutManager.scrollToPosition(newStationPosition);
                     }
                     mCollectionAdapter.notifyDataSetChanged(); // TODO Remove?
+                    channelsLoaded(mCollectionAdapter.getItemCount());
                 }
                 break;
         }
@@ -802,7 +823,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateList(String folder) {
 
-        Log.e("updated", "yes");
+
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(mActivity);
         mFolder = new File(storageHelper.getCollectionDirectory().getAbsolutePath() + "/" + folder);
@@ -812,7 +833,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         }
 
 
-        mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true);
+        mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, true, this);
 
         mRecyclerView.setAdapter(mCollectionAdapter);
         onResume();
@@ -832,5 +853,20 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void channelsLoaded(int size) {
+        if (size == 0) {
+            if (mLinerLayoutEmpty != null) {
+                mLinerLayoutEmpty.setVisibility(View.VISIBLE);
+                mImgAddChannel.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (mLinerLayoutEmpty != null) {
+                mLinerLayoutEmpty.setVisibility(View.GONE);
+                mImgAddChannel.setVisibility(View.GONE);
+            }
+        }
     }
 }
