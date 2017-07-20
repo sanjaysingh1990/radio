@@ -1,4 +1,4 @@
-package com.test.sanjay.appversionchecker;
+package com.raj.moh.appversionchecker;
 
 import org.junit.Test;
 

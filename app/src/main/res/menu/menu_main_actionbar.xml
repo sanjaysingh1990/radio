@@ -17,7 +17,14 @@
         android:title="@string/menu_about"
         android:visible="true"
         android:icon="@drawable/ic_info_icon"
-        app:showAsAction="always" />
+        app:showAsAction="withText" />
+    <item
+        android:id="@+id/menu_facebook"
+        android:title="@string/like_us_on_facebook"
+        android:visible="true"
+        android:icon="@mipmap/ic_thumbs_up"
+        app:showAsAction="withText" />
+
 
     <item
         android:id="@+id/menu_feedback"

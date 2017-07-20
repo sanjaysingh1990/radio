@@ -59,6 +59,8 @@ import org.rajmoh.radio.helpers.SleepTimerService;
 import org.rajmoh.radio.helpers.StationFetcher;
 import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
+import org.rajmoh.radio.pojo.Item;
+import org.rajmoh.radio.utils.Constants;
 import org.rajmoh.radio.utils.DurationSelected;
 import org.rajmoh.radio.utils.TimePickerFragment;
 import org.rajmoh.radio.utils.Util;
@@ -220,7 +222,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         mImgAddChannel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new Character('C'));// hide search progress if running
+                EventBus.getDefault().post(new Item());// hide search progress if running
 
             }
         });
@@ -316,6 +318,12 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
                 startActivity(favoritesIntent);
 
                 return true;
+            case R.id.menu_facebook:
+                Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
+                String facebookUrl = getFacebookPageURL(getActivity());
+                facebookIntent.setData(Uri.parse(facebookUrl));
+                startActivity(facebookIntent);
+                return true;
             // CASE DEFAULT
             default:
                 return super.onOptionsItemSelected(item);
@@ -323,6 +331,20 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
 
     }
 
+    //method to get the right URL to use in the intent
+    public String getFacebookPageURL(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        try {
+            int versionCode = packageManager.getPackageInfo("com.facebook.katana", 0).versionCode;
+            if (versionCode >= 3002850) { //newer versions of fb app
+                return "fb://facewebmodal/f?href=" + Constants.FACEBOOK_URL;
+            } else { //older versions of fb app
+                return "fb://page/" + Constants.FACEBOOK_PAGE_ID;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            return Constants.FACEBOOK_URL; //normal web url
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

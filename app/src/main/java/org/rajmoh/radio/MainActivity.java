@@ -58,6 +58,7 @@ import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
 import org.rajmoh.radio.pojo.CategoryModel;
 import org.rajmoh.radio.pojo.ChannelInfo;
+import org.rajmoh.radio.pojo.Item;
 import org.rajmoh.radio.utils.Util;
 
 import java.io.File;
@@ -188,10 +189,10 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         adView = (AdView) findViewById(R.id.adView);
 //load banner ads
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+              //  .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+              //  .addTestDevice("abc")
                 .build();
-        //  adView.loadAd(adRequest);
+             adView.loadAd(adRequest);
 
 
         setSupportActionBar(binding.mainContent.toolbar);
@@ -509,7 +510,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void addChannel(Character c) {
+    public void addChannel(Item item) {
 
 
         binding.drawer.openDrawer(GravityCompat.END);

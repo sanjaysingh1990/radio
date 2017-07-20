@@ -5,4 +5,6 @@ package com.raj.moh.appversionchecker;
  */
 
 public interface UpdateApplication {
+    void newVersionFound(String latestVersion);
+    void noUpdate();
 }

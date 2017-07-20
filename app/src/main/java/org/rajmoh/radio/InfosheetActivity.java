@@ -57,8 +57,8 @@ public final class InfosheetActivity extends AppCompatActivity implements Transi
     private void initializeBannerAds() {
         //for banner add
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("C04B1BFFB0774708339BC273F8A43708")
+             //   .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+               // .addTestDevice("C04B1BFFB0774708339BC273F8A43708")
                 .build();
         AdView adView = (AdView) findViewById(R.id.adView);
         adView.loadAd(adRequest);

@@ -24,6 +24,8 @@ public class Constants {
  public static final String FIRST_TIME_IN_APP="firsttimeinapp";
  public static final String FILE_NAME="airvoice";
 
+ public static String FACEBOOK_URL = "https://www.facebook.com/Air-Voice-107359429838747/?ref=bookmarks";
+ public static String FACEBOOK_PAGE_ID = "107359429838747";
 
 
 }

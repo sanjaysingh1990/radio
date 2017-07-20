@@ -1,4 +1,4 @@
-package com.test.sanjay.appversionchecker;
+package com.raj.moh.appversionchecker;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

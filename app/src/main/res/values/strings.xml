@@ -10,6 +10,7 @@
 
     <!-- menu entries -->
     <string name="menu_about">About</string>
+    <string name="like_us_on_facebook">Like us on Facebook</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_favorites">Favorites</string>
     <string name="menu_howto">How to use</string>

@@ -110,7 +110,7 @@ public class FeedBackActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-    //initializeBannerAds();
+    initializeBannerAds();
     }
 
     private boolean validate()
@@ -147,8 +147,8 @@ private void initializeBannerAds()
 {
     //for banner add
     AdRequest adRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-            .addTestDevice("C04B1BFFB0774708339BC273F8A43708")
+           // .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+           // .addTestDevice("C04B1BFFB0774708339BC273F8A43708")
             .build();
     activityFeedBackBinding.adView.loadAd(adRequest);
     activityFeedBackBinding.adView.setAdListener(new AdListener() {

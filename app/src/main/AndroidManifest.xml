@@ -11,6 +11,7 @@
     <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backupscheme"
         android:icon="@drawable/ic_radio_tower"
@@ -40,6 +41,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
 
 
@@ -81,6 +83,7 @@
             android:label="@string/favorites"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
 
         <!-- INFOSHEET ACTIVITY -->
@@ -88,6 +91,7 @@
             android:name=".InfosheetActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_infosheet"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -101,6 +105,7 @@
             android:label="@string/title_activity_player"
             android:parentActivityName=".MainActivity"
             android:resizeableActivity="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

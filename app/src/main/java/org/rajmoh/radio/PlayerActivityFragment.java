@@ -365,10 +365,10 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 
         //load banner ads
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+               // .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+               // .addTestDevice("abc")
                 .build();
-        //    adView.loadAd(adRequest);
+            adView.loadAd(adRequest);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(int i) {
@@ -1154,17 +1154,16 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 // Check the LogCat to get your test device ID
-                .addTestDevice("E5675C829ED064BFA2ACF17C9F2B9400")
+               // .addTestDevice("E5675C829ED064BFA2ACF17C9F2B9400")
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
 
         mInterstitialAd.setAdListener(new AdListener() {
             public void onAdLoaded() {
-                //mInterstitialAd.show();
+                mInterstitialAd.show();
             }
 
             @Override

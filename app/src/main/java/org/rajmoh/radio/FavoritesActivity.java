@@ -98,10 +98,10 @@ public final class FavoritesActivity extends AppCompatActivity implements Transi
         adView = (AdView) findViewById(R.id.adView);
 //load banner ads
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+             //   .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+              //  .addTestDevice("abc")
                 .build();
-       // adView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 
         EventBus.getDefault().post(new Boolean(true));// update is favorite
 
