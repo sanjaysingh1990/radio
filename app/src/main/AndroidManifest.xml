@@ -14,7 +14,7 @@
         android:name=".App"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backupscheme"
-        android:icon="@drawable/ic_radio_tower"
+        android:icon="@mipmap/ic_radio_tower"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/TransistorAppTheme">

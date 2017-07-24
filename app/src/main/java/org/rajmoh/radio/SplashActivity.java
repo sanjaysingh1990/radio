@@ -19,7 +19,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_flash);
+        setContentView(R.layout.activity_splash);
         //GET PACKAGE NAME
          if (Util.getInstance().isOnline(this)) {
             final CheckLatestVersion checkLatestVersion = new CheckLatestVersion(this);
@@ -32,7 +32,6 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void noUpdate() {
                     mVersionChecked = true;
-
 
                 }
             });
@@ -57,6 +56,7 @@ public class SplashActivity extends AppCompatActivity {
                 mCount++;
                 if (mCount > 2 && mVersionChecked) {
                     moveToDashboard(); //to dashboard
+
                 } else {
                     handler.postDelayed(this, 1000);
                 }

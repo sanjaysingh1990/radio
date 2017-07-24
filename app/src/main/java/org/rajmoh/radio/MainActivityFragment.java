@@ -212,7 +212,7 @@ public final class MainActivityFragment extends Fragment implements TransistorKe
         mImgEmpty = (ImageView) mRootView.findViewById(R.id.image_empty);
         mImgAddChannel = (ImageView) mRootView.findViewById(R.id.image_add_channel);
         mTxtEmpty = (TextView) mRootView.findViewById(R.id.text_empty);
-        mImgEmpty.setImageResource(R.drawable.ic_radio_no_channel);
+        mImgEmpty.setImageResource(R.mipmap.ic_radio_icon);
         mTxtEmpty.setText(getResources().getString(R.string.no_channels));
 
         // attach adapter to list view

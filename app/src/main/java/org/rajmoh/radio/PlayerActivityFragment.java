@@ -836,7 +836,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
 //        if (mPlayback && mStationID == mStationIDCurrent) {
         if (mPlayback && mStation != null && mStation.getPlaybackState()) {
             // change playback button image to stop
-            mPlaybackButton.setImageResource(R.drawable.smbl_stop);
+            mPlaybackButton.setImageResource(R.mipmap.smbl_stop);
             // change playback indicator
             if (mStationLoading) {
                 mPlaybackIndicator.setBackgroundResource(R.drawable.indicator_loading);
@@ -856,7 +856,7 @@ public final class PlayerActivityFragment extends Fragment implements Transistor
         // playback stopped
         else {
             // change playback button image to play
-            mPlaybackButton.setImageResource(R.drawable.smbl_play);
+            mPlaybackButton.setImageResource(R.mipmap.smbl_play);
             // change playback indicator
             mPlaybackIndicator.setBackgroundResource(R.drawable.indicator_disable);
             // hide metadata views

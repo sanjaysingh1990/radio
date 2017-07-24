@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/menu_timer"
-        android:icon="@drawable/ic_timer_white_24dp"
+        android:icon="@drawable/ic_timer_icon"
         android:title="@string/menu_timer"
         android:visible="true"
         app:showAsAction="always" />
@@ -16,7 +16,7 @@
         android:id="@+id/menu_about"
         android:title="@string/menu_about"
         android:visible="true"
-        android:icon="@drawable/ic_info_icon"
+        android:icon="@mipmap/ic_info_icon"
         app:showAsAction="withText" />
     <item
         android:id="@+id/menu_facebook"

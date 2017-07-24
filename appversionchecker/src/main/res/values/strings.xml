@@ -3,7 +3,7 @@
     <!-- update version dialog -->
 
     <string name="updateavailableTitle">Update Available</string>
-    <string name="updateMessage">A new version of Imenufr is available. Please update it now\s</string>
+    <string name="updateMessage">A new version of Air Voice is available. Please update it now\s</string>
     <string name="update_btn">Update</string>
     <string name="no_saved_addresses">Add new address</string>
     <string name="update">UPDATE</string>

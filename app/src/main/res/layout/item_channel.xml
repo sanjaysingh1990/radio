@@ -18,7 +18,7 @@
             android:id="@+id/text_channel_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_radio_black"
+            android:drawableLeft="@mipmap/ic_radio_white"
             android:gravity="left|center_vertical"
             android:drawablePadding="10dp"
             android:text="FACEBOOK"

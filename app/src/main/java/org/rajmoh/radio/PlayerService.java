@@ -240,15 +240,15 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getExtras() != null && intent.hasExtra(EXTRA_STATION_ID)) {
+        if (intent != null && intent.hasExtra(EXTRA_STATION_ID)) {
             mCurrentPosition = intent.getExtras().getInt(EXTRA_STATION_ID);
         }
 
-        if (intent.getExtras() != null && intent.hasExtra(CATEGORY_NAME)) {
+        if (intent != null && intent.hasExtra(CATEGORY_NAME)) {
             mCategoryName = intent.getExtras().getString(CATEGORY_NAME);
             loadCollection(mCategoryName);
         }
-        if (intent.getExtras() != null && intent.hasExtra(IS_FAVORITE)) {
+        if (intent != null && intent.hasExtra(IS_FAVORITE)) {
             mIsFavorite = intent.getExtras().getBoolean(IS_FAVORITE,false);
 
         }
