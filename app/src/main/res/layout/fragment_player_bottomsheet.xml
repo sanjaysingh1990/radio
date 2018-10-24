@@ -21,7 +21,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingTop="5dp"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center"
                 android:contentDescription="@string/descr_player_sheet_information_icon"
-                app:srcCompat="@drawable/ic_info_white_24dp"
+                android:src="@mipmap/ic_info_icon"
                 android:layout_marginBottom="100dp"
                 />
 
@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
                     android:contentDescription="@string/descr_player_sheet_content_copy_icon"
-                    app:srcCompat="@drawable/ic_content_copy_grey_24dp" />
+                    android:src="@mipmap/ic_copy_icon" />
             </LinearLayout>
 
             <!-- STREAM URL -->
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
                     android:contentDescription="@string/descr_player_sheet_content_copy_icon"
-                    app:srcCompat="@drawable/ic_content_copy_grey_24dp" />
+                    android:src="@mipmap/ic_copy_icon" />
             </LinearLayout>
 
             <!-- STATION MIME TYPE -->

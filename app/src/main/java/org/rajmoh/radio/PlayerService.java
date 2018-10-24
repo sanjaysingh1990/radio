@@ -240,15 +240,15 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getExtras() != null && intent.hasExtra(EXTRA_STATION_ID)) {
+        if (intent != null && intent.hasExtra(EXTRA_STATION_ID)) {
             mCurrentPosition = intent.getExtras().getInt(EXTRA_STATION_ID);
         }
 
-        if (intent.getExtras() != null && intent.hasExtra(CATEGORY_NAME)) {
+        if (intent != null && intent.hasExtra(CATEGORY_NAME)) {
             mCategoryName = intent.getExtras().getString(CATEGORY_NAME);
             loadCollection(mCategoryName);
         }
-        if (intent.getExtras() != null && intent.hasExtra(IS_FAVORITE)) {
+        if (intent != null && intent.hasExtra(IS_FAVORITE)) {
             mIsFavorite = intent.getExtras().getBoolean(IS_FAVORITE,false);
 
         }
@@ -302,8 +302,8 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // ACTION NEXT
         else if (intent.getAction().equals(ACTION_NEXT)) {
             LogHelper.e(LOG_TAG, "Service received command:NEXT");
-            Log.e("pos", mCurrentPosition + "");
-            Log.e("category,", mCategoryName);
+            //"pos", mCurrentPosition + "");
+            //"category,", mCategoryName);
             if (mStationList.size() > 1 && mCurrentPosition < mStationList.size() - 1) {
                 mCurrentPosition++;
 
@@ -332,7 +332,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
             }
 
             // dismiss notification
-            NotificationHelper.stop();
+           // NotificationHelper.stop();
             // set media session in-active
             mSession.setActive(false);
             //REMOVE NOTIFICATION FROM TRAY
@@ -358,7 +358,9 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
 
         // update controller - start playback
+        mController.getTransportControls().stop();
         mController.getTransportControls().play();
+
     }
 
     @Override
@@ -368,11 +370,11 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+       //"playbackstate",playbackState+"");
         switch (playbackState) {
             case STATE_BUFFERING:
                 // The player is not able to immediately play from the current position.
-                LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: BUFFERING");
+                LogHelper.e(LOG_TAG, "State of ExoPlayer has changed: BUFFERING");
                 mStationLoading = true;
                 if (mPlayback) {
                     // set loading state
@@ -406,7 +408,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
 
             case STATE_READY:
                 // The player is able to immediately play from the current position.
-                LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: READY");
+                LogHelper.e(LOG_TAG, "State of ExoPlayer has changed: READY");
 
                 if (mPlayback && mStationLoading) {
                     // set loading state
@@ -414,7 +416,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     saveAppState();
                     // send local broadcast: buffering finished - playback started
                     Intent intent = new Intent();
-                    if(mIsFavorite)
+                   if(mIsFavorite)
                         intent.setAction(ACTION_PLAYBACK_STATE_CHANGED_FAVORITE);
                     else
                         intent.setAction(ACTION_PLAYBACK_STATE_CHANGED);
@@ -873,9 +875,9 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(PlayerService.this);
         File mFolder = storageHelper.getCollectionDirectory();
-        //  Log.e("playerfolder", categoryName);
+        //  //"playerfolder", categoryName);
         File mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + categoryName);
-        //Log.e("playerfolder2", mCategoryFolder.getName());
+        ////"playerfolder2", mCategoryFolder.getName());
         // create folder if necessary
         if (!mCategoryFolder.exists()) {
             LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
@@ -905,7 +907,7 @@ public final class PlayerService extends MediaBrowserServiceCompat implements Tr
                     Station newStation = new Station(file);
                     if (newStation.getStreamUri() != null) {
                         mStationList.add(newStation);
-                        Log.e("playerlength", mStationList.size() + "");
+                        //"playerlength", mStationList.size() + "");
 
                     }
                 }

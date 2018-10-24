@@ -95,7 +95,7 @@ public class Util {
             DateFormat time = new SimpleDateFormat("hh:mm a");
             data = String.valueOf(date2.format(myDate));
         } catch (Exception ex) {
-            Log.e("error", ex.getMessage());
+            //"error", ex.getMessage());
         }
 
         return data;

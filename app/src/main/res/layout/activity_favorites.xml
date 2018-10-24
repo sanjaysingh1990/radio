@@ -27,17 +27,28 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
+            <ImageView
+                android:id="@+id/image_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_arrow_back" />
+
             <TextView
+                android:id="@+id/text_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
                 android:text="@string/favorites"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:textStyle="bold"
+                android:paddingLeft="30dp"
 
-                 />
+
+                />
         </android.support.v7.widget.Toolbar>
-
-
 
         <fragment
             android:id="@+id/fragment_main"
@@ -48,32 +59,6 @@
             tools:context="org.rajmoh.radio.MainActivityFragment"
             tools:layout="@layout/fragment_main" />
 
-        <LinearLayout
-            android:id="@+id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:visibility="gone"
-            >
-       <ImageView
-           android:layout_width="100dp"
-           android:layout_height="100dp"
-           android:layout_gravity="center_horizontal"
-           android:src="@drawable/ic_favorite_red_icon"
-           />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="No Favorates"
-                android:layout_marginTop="20dp"
-                android:textColor="@drawable/ic_radio_black"
-                android:textStyle="bold"
-                android:textSize="18sp"
-
-                />
-        </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

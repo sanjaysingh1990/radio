@@ -173,7 +173,7 @@ public final class NotificationHelper implements TransistorKeys {
         NotificationCompat.Builder builder;
         builder = new NotificationCompat.Builder(mService);
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        builder.setSmallIcon(R.drawable.ic_notificaiton_radio_icon);
+        builder.setSmallIcon(R.mipmap.ic_radio_tower);
         builder.setLargeIcon(getStationIcon(mService, station));
         builder.setContentTitle(station.getStationName());
         builder.setContentText(stationMetadata);
@@ -191,7 +191,7 @@ public final class NotificationHelper implements TransistorKeys {
         builder.addAction(R.drawable.ic_skip_previous, mService.getString(R.string.notification_previous), skipPreviousActionPendingIntent);
 
         builder.addAction(R.drawable.ic_skip_next, mService.getString(R.string.notification_next), skipNextActionPendingIntent);
-        builder.addAction(R.drawable.ic_close_notificaiton, mService.getString(R.string.notification_close), closeActionPendingIntent);
+        builder.addAction(R.drawable.ic_close_notification, mService.getString(R.string.notification_close), closeActionPendingIntent);
 
 
         return builder;

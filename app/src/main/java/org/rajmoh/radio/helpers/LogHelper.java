@@ -42,7 +42,7 @@ public final class LogHelper {
 
 
     public static void e(final String tag, String message) {
-        Log.e(tag, message);
+        //tag, message);
     }
 
 

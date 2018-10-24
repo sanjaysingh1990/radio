@@ -314,7 +314,7 @@ public final class Loader implements LoaderErrorThrower {
         }
       } catch (Exception e) {
         // This should never happen, but handle it anyway.
-        Log.e(TAG, "Unexpected exception loading stream", e);
+        //TAG, "Unexpected exception loading stream", e);
         if (!released) {
           obtainMessage(MSG_IO_EXCEPTION, new UnexpectedLoaderException(e)).sendToTarget();
         }
@@ -322,7 +322,7 @@ public final class Loader implements LoaderErrorThrower {
         // This can occur if a stream is malformed in a way that causes an extractor to think it
         // needs to allocate a large amount of memory. We don't want the process to die in this
         // case, but we do want the playback to fail.
-        Log.e(TAG, "OutOfMemory error loading stream", e);
+        //TAG, "OutOfMemory error loading stream", e);
         if (!released) {
           obtainMessage(MSG_IO_EXCEPTION, new UnexpectedLoaderException(e)).sendToTarget();
         }
@@ -330,7 +330,7 @@ public final class Loader implements LoaderErrorThrower {
         // We'd hope that the platform would kill the process if an Error is thrown here, but the
         // executor may catch the error (b/20616433). Throw it here, but also pass and throw it from
         // the handler thread so that the process dies even if the executor behaves in this way.
-        Log.e(TAG, "Unexpected error loading stream", e);
+        //TAG, "Unexpected error loading stream", e);
         if (!released) {
           obtainMessage(MSG_FATAL_ERROR, e).sendToTarget();
         }

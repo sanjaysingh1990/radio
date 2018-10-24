@@ -107,7 +107,7 @@ public final class CachedRegionTracker implements Cache.Listener {
     // Look up a region this span falls into.
     Region floorRegion = regions.floor(removedRegion);
     if (floorRegion == null) {
-      Log.e(TAG, "Removed a span we were not aware of");
+      //TAG, "Removed a span we were not aware of");
       return;
     }
 

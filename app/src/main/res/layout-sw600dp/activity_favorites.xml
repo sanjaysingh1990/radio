@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -12,25 +11,45 @@
     </data>
 
 
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context="com.learn2crack.myapplication.MainActivity">
 
-        <android.support.design.widget.CoordinatorLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:background="@color/transistor_red"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/favorites"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+
+                />
+        </android.support.v7.widget.Toolbar>
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/fragment_main"
+            android:name="org.rajmoh.radio.FavoritesActivityFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            tools:context="com.learn2crack.myapplication.MainActivity">
-
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/fragment_main"
-                android:name="org.rajmoh.radio.MainActivityFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="org.rajmoh.radio.MainActivityFragment"
-                tools:layout="@layout/fragment_main" />
-
-        </android.support.design.widget.CoordinatorLayout>
+            android:layout_marginTop="?attr/actionBarSize"
+            tools:context="org.rajmoh.radio.MainActivityFragment"
+            tools:layout="@layout/fragment_main" />
 
 
+
+
+    </android.support.design.widget.CoordinatorLayout>
 
 
 </layout>

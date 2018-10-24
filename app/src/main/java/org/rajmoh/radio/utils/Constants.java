@@ -18,11 +18,14 @@ public class Constants {
  public static final String MOREVIDEOSID_MYSTERIOUS_WORLD="UUAY4f3wvaQOHc7-WSRrxdHw";
 
  public static final String USERNAME="username";
- public static final String FILE_NAME="awesomeradio";
+
  public static final String FCM_DEVICE_TOKEN="fcmdevicetoken";
  public static final String FAVORITES_LOADED_ONCE="favoriteloaded";
  public static final String FIRST_TIME_IN_APP="firsttimeinapp";
+ public static final String FILE_NAME="airvoice";
 
+ public static String FACEBOOK_URL = "https://www.facebook.com/Air-Voice-107359429838747/?ref=bookmarks";
+ public static String FACEBOOK_PAGE_ID = "107359429838747";
 
 
 }

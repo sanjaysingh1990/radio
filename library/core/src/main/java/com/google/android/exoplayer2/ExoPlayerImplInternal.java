@@ -350,17 +350,17 @@ import java.io.IOException;
           return false;
       }
     } catch (ExoPlaybackException e) {
-      Log.e(TAG, "Renderer error.", e);
+      //TAG, "Renderer error.", e);
       eventHandler.obtainMessage(MSG_ERROR, e).sendToTarget();
       stopInternal();
       return true;
     } catch (IOException e) {
-      Log.e(TAG, "Source error.", e);
+      //TAG, "Source error.", e);
       eventHandler.obtainMessage(MSG_ERROR, ExoPlaybackException.createForSource(e)).sendToTarget();
       stopInternal();
       return true;
     } catch (RuntimeException e) {
-      Log.e(TAG, "Internal runtime error.", e);
+      //TAG, "Internal runtime error.", e);
       eventHandler.obtainMessage(MSG_ERROR, ExoPlaybackException.createForUnexpected(e))
           .sendToTarget();
       stopInternal();
@@ -711,7 +711,7 @@ import java.io.IOException;
         renderer.disable();
       } catch (ExoPlaybackException | RuntimeException e) {
         // There's nothing we can do.
-        Log.e(TAG, "Stop failed.", e);
+        //TAG, "Stop failed.", e);
       }
     }
     enabledRenderers = new Renderer[0];
@@ -1552,7 +1552,7 @@ import java.io.IOException;
         mediaSource.releasePeriod(mediaPeriod);
       } catch (RuntimeException e) {
         // There's nothing we can do.
-        Log.e(TAG, "Period release failed.", e);
+        //TAG, "Period release failed.", e);
       }
     }
 

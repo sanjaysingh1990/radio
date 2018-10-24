@@ -16,7 +16,6 @@ package org.rajmoh.radio;
 
 import android.app.Activity;
 import android.app.Application;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,18 +32,17 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import org.rajmoh.radio.callbacks.FavoratesChannelsLoadedCallBack;
 import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.ImageHelper;
 import org.rajmoh.radio.helpers.LogHelper;
@@ -54,8 +52,8 @@ import org.rajmoh.radio.helpers.SleepTimerService;
 import org.rajmoh.radio.helpers.StationFetcher;
 import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
-import org.rajmoh.radio.utils.DurationSelected;
-import org.rajmoh.radio.utils.TimePickerFragment;
+import org.rajmoh.radio.utils.Constants;
+import org.rajmoh.radio.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * MainActivityFragment class
  */
-public final class FavoritesActivityFragment extends Fragment implements TransistorKeys {
+public final class FavoritesActivityFragment extends Fragment implements TransistorKeys, FavoratesChannelsLoadedCallBack {
 
     /* Define log tag */
     private static final String LOG_TAG = FavoritesActivityFragment.class.getSimpleName();
@@ -99,7 +97,8 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
     private SleepTimerService mSleepTimerService;
     private String mSleepTimerNotificationMessage;
     private Snackbar mSleepTimerNotification;
-  
+    private LinearLayout mLinerLayoutEmpty;
+
 
     /* Constructor (default) */
     public FavoritesActivityFragment() {
@@ -146,11 +145,11 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
             mActivity.finish();
         }
         //  mFolderSize = mFolder.listFiles().length;
-        // Log.e("location",mFolder.getAbsolutePath());
-        //Log.e("len",mFolderSize+"");
+        // //"location",mFolder.getAbsolutePath());
+        ////"len",mFolderSize+"");
         // create collection adapter
         if (mCollectionAdapter == null) {
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,false);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, false, this);
         }
 
         // initialize broadcast receivers
@@ -188,11 +187,14 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
                 return true;
             }
         };
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(Util.getInstance().getDrawable(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
-
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         // attach adapter to list view
         mRecyclerView.setAdapter(mCollectionAdapter);
 
+        mLinerLayoutEmpty = (LinearLayout) mRootView.findViewById(R.id.layout_linear_empty);
 
         return mRootView;
     }
@@ -224,7 +226,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
         int folderSize = mFolder.listFiles().length;
         if (mFolderSize != mFolder.listFiles().length) {
             mFolderSize = folderSize;
-            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder,false);
+            mCollectionAdapter = new CollectionAdapter(mActivity, mFolder, false, this);
             mRecyclerView.setAdapter(mCollectionAdapter);
         }
 
@@ -243,9 +245,6 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
         super.onDestroy();
         unregisterBroadcastReceivers();
     }
-
-
-
 
 
     @Override
@@ -420,7 +419,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
 
     /* Handles tap timer icon in actionbar */
     private void handleMenuSleepTimerClick(long duration) {
-        Log.e("duration", duration + "");
+        //"duration", duration + "");
         // load app state
         loadAppState(mActivity);
 
@@ -523,6 +522,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
     /* Loads app state from preferences */
     private void loadAppState(Context context) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        //SharedPreferences settings = getActivity().getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
         mStationIDSelected = settings.getInt(PREF_STATION_ID_SELECTED, 0);
         mStationIDCurrent = settings.getInt(PREF_STATION_ID_CURRENTLY_PLAYING, -1);
         mStationIDLast = settings.getInt(PREF_STATION_ID_LAST, -1);
@@ -535,7 +535,9 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
 
     /* Saves app state to SharedPreferences */
     private void saveAppState(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        //"favfrag","app state saved");
+       // SharedPreferences settings = getActivity().getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
+          SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(PREF_STATION_ID_CURRENTLY_PLAYING, mStationIDCurrent);
         editor.putInt(PREF_STATION_ID_LAST, mStationIDLast);
@@ -562,7 +564,7 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-                    Log.e("receiverfav","playback");
+                    //"receiverfav", "playback");
                     handlePlaybackStateChanges(intent);
                 }
             }
@@ -677,6 +679,8 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
                     mCollectionAdapter.setStationIDSelected(newStationPosition, false, false);
 
                     mCollectionAdapter.notifyDataSetChanged(); // TODO Remove?
+
+
                 }
                 break;
 
@@ -706,7 +710,6 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
 
             // CASE: station was deleted
             case STATION_DELETED:
-                Log.e("collection","changed2");
 
                 if (intent.hasExtra(EXTRA_STATION) && intent.hasExtra(EXTRA_STATION_ID)) {
 
@@ -736,6 +739,8 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
                         mLayoutManager.scrollToPosition(newStationPosition);
                     }
                     mCollectionAdapter.notifyDataSetChanged(); // TODO Remove?
+                    //if no favorites left show empty screen
+                    favorateChannelsLoaded(mCollectionAdapter.getItemCount());
                 }
                 break;
         }
@@ -743,4 +748,16 @@ public final class FavoritesActivityFragment extends Fragment implements Transis
     }
 
 
+    @Override
+    public void favorateChannelsLoaded(int size) {
+
+
+        if (size == 0) {
+            if (mLinerLayoutEmpty != null)
+                mLinerLayoutEmpty.setVisibility(View.VISIBLE);
+        } else {
+            if (mLinerLayoutEmpty != null)
+                mLinerLayoutEmpty.setVisibility(View.GONE);
+        }
+    }
 }

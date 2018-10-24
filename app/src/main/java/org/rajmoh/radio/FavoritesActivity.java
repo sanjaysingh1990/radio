@@ -38,6 +38,7 @@ import org.rajmoh.radio.databinding.ActivityFavoritesBinding;
 import org.rajmoh.radio.helpers.LogHelper;
 import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
+import org.rajmoh.radio.utils.Constants;
 
 import java.io.File;
 
@@ -97,13 +98,22 @@ public final class FavoritesActivity extends AppCompatActivity implements Transi
         adView = (AdView) findViewById(R.id.adView);
 //load banner ads
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+             //   .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+              //  .addTestDevice("abc")
                 .build();
         adView.loadAd(adRequest);
 
         EventBus.getDefault().post(new Boolean(true));// update is favorite
 
+
+        //left drawer click event
+
+        binding.imageBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -182,7 +192,8 @@ public final class FavoritesActivity extends AppCompatActivity implements Transi
 
     /* Saves app state to SharedPreferences */
     private void saveAppState(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+       // SharedPreferences settings = getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
+         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = settings.edit();
         // editor.putInt(PREF_STATION_ID_SELECTED, mStationID);
         editor.putBoolean(PREF_TWO_PANE, mTwoPane);

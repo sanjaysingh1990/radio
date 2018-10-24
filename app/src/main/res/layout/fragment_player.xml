@@ -32,7 +32,7 @@
                 android:layout_height="?android:attr/listPreferredItemHeight"
                 android:contentDescription="@string/descr_station_icon"
                 android:minHeight="?android:attr/listPreferredItemHeight"
-                app:srcCompat="@drawable/ic_notesymbol_36dp" />
+                android:src="@mipmap/ic_music_icon" />
 
             <LinearLayout
                 android:id="@+id/player_layout_station_info"
@@ -92,7 +92,7 @@
                 android:paddingEnd="2dp"
                 android:paddingStart="4dp"
                 android:visibility="gone"
-                app:srcCompat="@drawable/ic_more_vert_white_24dp" />
+                 />
 
         </LinearLayout>
 
@@ -125,8 +125,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/circular_button_gradient"
                 android:contentDescription="@string/descr_playback_button"
-
-                android:src="@drawable/smbl_play" />
+                android:src="@mipmap/smbl_play" />
 
 
         </FrameLayout>
@@ -152,7 +151,7 @@
         android:layout_gravity="top|left"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="100dp"
-        android:src="@drawable/ic_skip_previous"
+        android:src="@mipmap/ic_previous_station"
         android:visibility="gone"
 
         />
@@ -164,7 +163,7 @@
         android:layout_gravity="top|right"
         android:layout_marginRight="20dp"
         android:layout_marginTop="100dp"
-        android:src="@drawable/ic_next_station"
+        android:src="@mipmap/ic_next_station"
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
@@ -176,7 +175,7 @@
         android:layout_marginLeft="20dp"
         android:clickable="true"
         app:fabSize="mini"
-        app:srcCompat="?attr/actionModeShareDrawable" />
+        android:src="?attr/actionModeShareDrawable" />
     <!-- BOTTOM SHEET -->
     <include
 

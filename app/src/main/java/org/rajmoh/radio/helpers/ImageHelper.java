@@ -53,7 +53,7 @@ public final class ImageHelper {
             mInputImage = inputImage;
         } else {
             // set default station image
-            mInputImage = getBitmap(R.drawable.ic_notesymbol_36dp);
+            mInputImage = getBitmap(R.drawable.ic_music_icon);
         }
     }
 

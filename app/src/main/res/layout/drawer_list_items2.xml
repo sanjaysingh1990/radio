@@ -13,11 +13,12 @@
             android:layout_width="30dp"
             android:layout_height="60dp"
             android:layout_gravity="left|center_vertical"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="4dp"
             android:background="@drawable/half_circle_right"
-            android:drawableLeft="@drawable/ic_queue_music"
-            android:paddingLeft="3dp"
-            android:visibility="visible" />
+            android:drawableLeft="@mipmap/ic_queue_music"
+            android:visibility="visible"
+            android:padding="2dp"
+            />
 
 
         <android.support.v7.widget.RecyclerView

@@ -24,6 +24,7 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,6 +44,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.rajmoh.radio.adapters.RecyclerCategoryAdapter;
 import org.rajmoh.radio.adapters.RecyclerChannelsAdapter;
 import org.rajmoh.radio.callbacks.CategorySelectedCallback;
@@ -55,6 +58,7 @@ import org.rajmoh.radio.helpers.StorageHelper;
 import org.rajmoh.radio.helpers.TransistorKeys;
 import org.rajmoh.radio.pojo.CategoryModel;
 import org.rajmoh.radio.pojo.ChannelInfo;
+import org.rajmoh.radio.pojo.Item;
 import org.rajmoh.radio.utils.Util;
 
 import java.io.File;
@@ -83,6 +87,8 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     private ArrayList<ChannelInfo> mChannelList;
     private String mDirectoryName;
     private AdView adView;
+    private String mPreviousCategory = "hindi";
+    boolean mDoubleBackToExitPressedOnce = false;
 
 
     @Override
@@ -110,9 +116,12 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         // get collection folder
         StorageHelper storageHelper = new StorageHelper(this);
         mFolder = storageHelper.getCollectionDirectory();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String lastCategory = settings.getString(PREF_LAST_CATEGORY_SELECTED, "Hindi");
 
         //default for hindi
-        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/Hindi");
+        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + lastCategory);
+        mPreviousCategory = lastCategory;
         if (!mCategoryFolder.exists())
             mCategoryFolder.mkdirs();
 
@@ -173,16 +182,17 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         binding.leftDrawerContent.recyclerviewLeftdrawer.setAdapter(mAdapter);
         binding.rightDrawerContent.recyclerviewRightdrawer.setAdapter(mChannelsAdapter);
         loadFromServer();
-        loadChannels("hindi");
+
+        loadChannels(lastCategory);
 
         //load banner ad
         adView = (AdView) findViewById(R.id.adView);
 //load banner ads
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+              //  .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+              //  .addTestDevice("abc")
                 .build();
-        adView.loadAd(adRequest);
+             adView.loadAd(adRequest);
 
 
         setSupportActionBar(binding.mainContent.toolbar);
@@ -310,29 +320,38 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
     @Override
     public void categorySelected(String cateName) {
+        binding.drawer.closeDrawer(GravityCompat.START); // close left category drawer
 
-        loadChannels(cateName);
-        binding.drawer.closeDrawer(GravityCompat.START);
-        binding.drawer.openDrawer(GravityCompat.END);
-        binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
-        mDirectoryName = cateName;
-        StorageHelper storageHelper = new StorageHelper(this);
-        mFolder = storageHelper.getCollectionDirectory();
-        mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + cateName);
-        if (!mCategoryFolder.exists())
-            mCategoryFolder.mkdirs();
-        EventBus.getDefault().post(new String(cateName));// hide search progress if running
-        Intent intent = new Intent(this, PlayerService.class);
-        intent.setAction(ACTION_STOP);
-        startService(intent);
+        if (mPreviousCategory.compareToIgnoreCase(cateName) != 0) {
+            loadChannels(cateName);
+            binding.drawer.openDrawer(GravityCompat.END);
+            binding.rightDrawerContent.progressbar.setVisibility(View.VISIBLE);
+            mDirectoryName = cateName;
+            StorageHelper storageHelper = new StorageHelper(this);
+            mFolder = storageHelper.getCollectionDirectory();
+            mCategoryFolder = new File(mFolder.getAbsolutePath() + "/" + cateName);
+            if (!mCategoryFolder.exists())
+                mCategoryFolder.mkdirs();
+            EventBus.getDefault().post(new String(cateName));// hide search progress if running
+            Intent intent = new Intent(this, PlayerService.class);
+            intent.setAction(ACTION_STOP);
+            startService(intent);
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PREF_LAST_CATEGORY_SELECTED, cateName);
+            editor.apply();
+            LogHelper.v(LOG_TAG, "Saving state (" + cateName);
 
+
+        }
+        mPreviousCategory = cateName;
 
     }
 
     private void loadFromServer() {
         if (Util.getInstance().isOnline(this)) {
             //  activityFavoriteBinding.progressbar.setVisibility(View.VISIBLE);
-
+            binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.VISIBLE);
             //get device id
            /* String android_id = Util.getInstance().getDeviceId(FavoriteActivity.this);
             String favoritebranch="UserFavorites";
@@ -343,10 +362,12 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
             Util.getInstance().getDatabaseReference().child("cate").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.GONE);
 
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         CategoryModel item = noteDataSnapshot.getValue(CategoryModel.class);
-                        // Log.e("data",item.getCate_name());
+
+                        // //"data",item.getCate_name());
                         mCategoryList.add(item);
                         //save to favorite to database
                      /*   Realm myRealm = Util.getInstance().getRelam(FavoriteActivity.this);
@@ -373,7 +394,8 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    //Log.e("error", databaseError.getMessage());
+                    binding.leftDrawerContent.layoutLinerLeftloader.setVisibility(View.GONE);
+                    ////"error", databaseError.getMessage());
                     Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
                         public void retry() {
@@ -399,6 +421,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
         if (Util.getInstance().isOnline(this)) {
             mChannelList.clear();
             mChannelsAdapter.notifyDataSetChanged();
+            showProgress();
             //  activityFavoriteBinding.progressbar.setVisibility(View.VISIBLE);
 
             //get device id
@@ -408,7 +431,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
             {
                 favoritebranch="UserFavoritesMysetriousWorld";
             }*/
-            // Log.e("cn",categoryName);
+            // //"cn",categoryName);
             Util.getInstance().getDatabaseReference().child(categoryName.toLowerCase()).child("channel").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -416,7 +439,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                     for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
                         ChannelInfo item = noteDataSnapshot.getValue(ChannelInfo.class);
-                        //  Log.e("data",item.getChannel_name());
+                        //  //"data",item.getChannel_name());
                         mChannelList.add(item);
                         //save to favorite to database
                      /*   Realm myRealm = Util.getInstance().getRelam(FavoriteActivity.this);
@@ -441,7 +464,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    //Log.e("error", databaseError.getMessage());
+                    ////"error", databaseError.getMessage());
                     Util.getInstance().showSnackBar(binding.drawer, databaseError.getMessage(), getResources().getString(R.string.retry), true, new SnackBarEvent() {
                         @Override
                         public void retry() {
@@ -459,7 +482,7 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
                     loadFromServer();
                 }
             });
-            hideProgress();
+
 
         }
     }
@@ -483,6 +506,49 @@ public final class MainActivity extends AppCompatActivity implements TransistorK
     private void hideProgress() {
         binding.rightDrawerContent.progressbar.setVisibility(View.GONE);
         binding.rightDrawerContent.textLoading.setVisibility(View.GONE);
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void addChannel(Item item) {
+
+
+        binding.drawer.openDrawer(GravityCompat.END);
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDoubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.mDoubleBackToExitPressedOnce = true;
+        Util.getInstance().showToast(this,getResources().getString(R.string.double_back_press));
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mDoubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+
 
     }
 }

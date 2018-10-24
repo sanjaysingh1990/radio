@@ -196,7 +196,7 @@ public class IcyInputStream extends FilterInputStream {
             s = new String( mbuffer, 0, size, characterEncoding );
         }
         catch (Exception e) {
-            Log.e( LOG, "Cannot convert bytes to String" );
+            // LOG, "Cannot convert bytes to String" );
             return;
         }
 

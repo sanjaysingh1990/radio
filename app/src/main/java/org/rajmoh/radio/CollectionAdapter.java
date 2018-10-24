@@ -36,6 +36,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.rajmoh.radio.callbacks.ChannelsLoadedCallBack;
+import org.rajmoh.radio.callbacks.FavoratesChannelsLoadedCallBack;
 import org.rajmoh.radio.core.Station;
 import org.rajmoh.radio.helpers.DialogError;
 import org.rajmoh.radio.helpers.ImageHelper;
@@ -70,14 +72,23 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     private int mStationIDSelected;
     private boolean mTwoPane;
     private boolean mIsFavorite;
+    private FavoratesChannelsLoadedCallBack mFavoriteChannelsLoadedCallBack;
+    private ChannelsLoadedCallBack mChannelsLoadedCallBack;
 
     /* Constructor */
-    public CollectionAdapter(Activity activity, File folder, boolean isFavorite) {
+    public CollectionAdapter(Activity activity, File folder, boolean isFavorite, Object callBack) {
         // set main variables
         mActivity = activity;
         mFolder = folder;
         mStationIDSelected = 0;
         mIsFavorite = isFavorite;
+
+        if (callBack instanceof FavoratesChannelsLoadedCallBack)
+            mFavoriteChannelsLoadedCallBack = (FavoratesChannelsLoadedCallBack) callBack;
+        else if (callBack instanceof ChannelsLoadedCallBack)
+            mChannelsLoadedCallBack = (ChannelsLoadedCallBack) callBack;
+
+
         mStationList = new SortedList<Station>(Station.class, new SortedListAdapterCallback<Station>(this) {
 
             @Override
@@ -133,7 +144,6 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         // final int position --> Do not treat position as fixed; only use immediately and call holder.getAdapterPosition() to look it up later
         // get station from position
         final Station station = mStationList.get(position);
-        Log.e("pbs",station.getPlaybackState()+"");
         if (mTwoPane && mStationIDSelected == position) {
             holder.getListItemLayout().setSelected(true);
         } else {
@@ -169,6 +179,10 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
         } else {
             holder.getPlaybackIndicator().setVisibility(View.GONE);
         }
+        //"data1", "called" + !mTwoPane);
+        //"data2", "called" + mPlayback);
+        //"data3", "called" + station.getPlaybackState());
+        //"data4", "called" + (mStationIDCurrent == position));
 
         // attach three dots menu - in phone view only
         if (!mTwoPane) {
@@ -222,7 +236,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Fills sorted list of station */
     private void loadCollection() {
-        Log.e("loadedfolder", mFolder.getName());
+        //"loadedfolder", mFolder.getName());
         // create folder if necessary
         if (!mFolder.exists()) {
             LogHelper.v(LOG_TAG, "Creating mFolder new folder: " + mFolder.toString());
@@ -256,7 +270,12 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                 }
             }
         }
-
+        if (mFavoriteChannelsLoadedCallBack != null) {
+            mFavoriteChannelsLoadedCallBack.favorateChannelsLoaded(mStationList.size());
+        }
+        if (mChannelsLoadedCallBack != null) {
+            mChannelsLoadedCallBack.channelsLoaded(mStationList.size());
+        }
     }
 
 
@@ -284,7 +303,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             intent.putExtra(EXTRA_STATION_ID, position);
             intent.putExtra(EXTRA_FROM, !mIsFavorite);
             intent.putExtra(CATEGORY_NAME, mFolder.getName());
-            Log.e("atadpater",station.getPlaybackState()+"");
+            //"atadpater", station.getPlaybackState() + "");
 
             mActivity.startActivity(intent);
         }
@@ -351,7 +370,12 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Loads app state from preferences */
     private void loadAppState(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences settings;
+      /* if (!mIsFavorite)
+            settings = mActivity.getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
+        else*/
+
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
         mTwoPane = settings.getBoolean(PREF_TWO_PANE, false);
         mStationIDCurrent = settings.getInt(PREF_STATION_ID_CURRENTLY_PLAYING, -1);
         mStationIDLast = settings.getInt(PREF_STATION_ID_LAST, -1);
@@ -364,7 +388,14 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Saves app state to SharedPreferences */
     private void saveAppState(Context context) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences settings;
+       /*if (!mIsFavorite)
+            settings = mActivity.getSharedPreferences(Constants.FILE_NAME, Context.MODE_PRIVATE);
+        else*/
+
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(PREF_STATION_ID_SELECTED, mStationIDSelected);
         editor.apply();
@@ -382,7 +413,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
     public void setStationIDSelected(int stationIDSelected, boolean playbackState, boolean startPlayback) {
 
         mStationIDSelected = stationIDSelected;
-       // saveAppState(mActivity);
+        // saveAppState(mActivity);
         if (mStationIDSelected >= 0 && mStationIDSelected < mStationList.size()) {
             mStationList.get(stationIDSelected).setPlaybackState(playbackState);
         }
@@ -565,12 +596,16 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
 
     /* Handles changes in state of playback, eg. start, stop, loading stream */
     private void handlePlaybackStateChanged(Intent intent) {
+        for (int pos = 0; pos < mStationList.size(); pos++) {
+            mStationList.get(pos).setPlaybackState(false);
+            notifyItemChanged(pos);
+        }
 
         // load app state
         loadAppState(mActivity);
 
         if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE) && intent.hasExtra(EXTRA_STATION_ID)) {
-
+            Log.e("changing", "true");
             notifyDataSetChanged();
 
             // get station ID from intent
@@ -581,10 +616,12 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                 case PLAYBACK_LOADING_STATION:
                     if (mStationIDLast > -1 && mStationIDLast < mStationList.size()) {
                         mStationList.get(mStationIDLast).setPlaybackState(false);
+
                     }
                     mStationLoading = true;
                     mPlayback = true;
                     if (stationID > -1 && stationID < mStationList.size()) {
+
                         mStationList.get(stationID).setPlaybackState(true);
                     }
                     notifyDataSetChanged();
@@ -594,6 +631,7 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                 case PLAYBACK_STARTED:
                     mStationLoading = false;
                     if (stationID > -1 && stationID < mStationList.size()) {
+
                         mStationList.get(stationID).setPlaybackState(true);
                     }
                     notifyDataSetChanged();
@@ -608,6 +646,12 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
                     notifyDataSetChanged();
                     break;
             }
+           /* Log.e("stationId", stationID + "");
+            Log.e("loading", mStationLoading + "");
+            Log.e("playback", mPlayback + "");
+            if (stationID > 0 && stationID < mStationList.size())
+                Log.e("state", mStationList.get(stationID).getPlaybackState() + "");*/
+
         }
 
     }
@@ -621,7 +665,6 @@ public final class CollectionAdapter extends RecyclerView.Adapter<CollectionAdap
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.hasExtra(EXTRA_PLAYBACK_STATE_CHANGE)) {
-                    Log.e("playback","received"+!mIsFavorite);
                     handlePlaybackStateChanged(intent);
                 }
             }
